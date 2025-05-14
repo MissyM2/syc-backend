@@ -1,13 +1,13 @@
 const express = require('express');
-// const cors = require('cors');
+const cors = require('cors');
 
-// var corsOptions = {
-//   origin: 'http://localhost:3000',
-// };
+var corsOptions = {
+  origin: 'http://localhost:3000',
+};
 
 const app = express();
 
-//app.use(cors(corsOptions));
+app.use(cors(corsOptions));
 
 // parse requests of content-type - application/json
 app.use(express.json());
@@ -31,7 +31,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // simple route
 app.get('/', (req, res) => {
-  res.json({ message: 'Welcome to bezkoder application.' });
+  res.json({ message: 'Welcome to Missy  application.' });
 });
 
 //require('./app/routes/user.routes')(app);
