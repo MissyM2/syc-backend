@@ -34,7 +34,7 @@ app.get('/', (req, res) => {
   res.json({ message: 'Welcome to Missy  application.' });
 });
 
-require('./app/routes/user.routes')(app);
+require('./routes/user.routes')(app);
 
 // set port, listen for requests
 const PORT = process.env.PORT || 3000;
