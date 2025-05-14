@@ -2,11 +2,12 @@ const express = require('express');
 const app = express();
 
 app.get('/', (req, res) => {
-  res.send("Express on Vercel");
+  res.send('Express on Vercel');
 });
 
-//app.listen(5001);
 
-app.listen(3000, () => console.log("Server ready on port 3000."));
+const PORT = process.env.PORT || 5001;
+
+app.listen(PORT, () => console.log('Server ready on port 5001.'));
 
 module.exports = app;

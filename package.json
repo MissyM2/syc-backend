@@ -5,10 +5,13 @@
   "license": "ISC",
   "author": "",
   "type": "commonjs",
-  "main": "index.js",
+  "main": "index.ts",
+  "engines": {
+    "node": "23.10.0",
+    "npm": "11.2.0"
+  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node index.js"
+    "start": "node index.ts"
   },
   "dependencies": {
     "express": "^5.1.0"
