@@ -1,5 +1,5 @@
 module.exports = (app) => {
-  const users = require('../../../temp/api/controllers/user.controller.js');
+  const users = require('../controllers/user.controller.js');
 
   var router = require('express').Router();
 
