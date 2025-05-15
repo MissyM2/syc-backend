@@ -6,12 +6,8 @@
   "author": "",
   "type": "commonjs",
   "main": "index.ts",
-  "engines": {
-    "node": "22.x",
-    "npm": "11.2.0"
-  },
   "scripts": {
-    "start": "node index.ts"
+    "start": "node api/index.ts"
   },
   "dependencies": {
     "cors": "^2.8.5",

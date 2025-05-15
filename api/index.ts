@@ -17,7 +17,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // simple route
 app.get('/', (req, res) => {
-  res.json({ message: 'Welcome to Missy Maloney application.' });
+  res.json({ message: 'Welcome to Thursday application.' });
 });
 
 require('./routes/user.routes')(app);
@@ -25,6 +25,6 @@ require('./routes/user.routes')(app);
 // set port, listen for requests
 const PORT = process.env.PORT || 3000;
 
-app.listen(PORT, () => console.log('Server ready on port {PORT}.'));
+app.listen(PORT, () => console.log(`Server ready on port ${PORT}.`));
 
 module.exports = app;
