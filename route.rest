@@ -1,5 +1,21 @@
-GET http://localhost:3000
+GET http://localhost:3000/users
 
 ###
 
-GET http://localhost:3000/users/12
+GET http://localhost:3000/users/6826314138ab7f1f191507e4
+
+###
+
+POST http://localhost:3000/users
+Content-type: application/json
+
+{
+  "name": "Beth Lyons",
+  "emailAddress": "beth@example.com"
+}
+
+###
+
+DELETE http://localhost:3000/users/68263704a72d5da101d7187e
+
+

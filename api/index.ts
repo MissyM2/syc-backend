@@ -1,30 +1,17 @@
+require('dotenv').config();
+
 const express = require('express');
-const cors = require('cors');
-
-var corsOptions = {
-  origin: 'http://localhost:3000',
-};
-
 const app = express();
+const mongoose = require('mongoose');
 
-app.use(cors(corsOptions));
+mongoose.connect(process.env.DATABASE_URL, { useNewUrlParser: true });
+const db = mongoose.connection;
+db.on('error', (error) => console.error(error));
+db.once('open', () => console.log('Connected to Database'));
 
-// parse requests of content-type - application/json
 app.use(express.json());
 
-// parse requests of content-type - application/x-www-form-urlencoded
-app.use(express.urlencoded({ extended: true }));
+const usersRouter = require('./routes/users');
+app.use('/users', usersRouter);
 
-// simple route
-app.get('/', (req, res) => {
-  res.json({ message: 'Welcome to Thursday application.' });
-});
-
-require('./routes/user.routes')(app);
-
-// set port, listen for requests
-const PORT = process.env.PORT || 3000;
-
-app.listen(PORT, () => console.log(`Server ready on port ${PORT}.`));
-
-module.exports = app;
+app.listen(3000, () => console.log('Server Started'));
