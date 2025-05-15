@@ -15,7 +15,7 @@ router.get('/', async (req, res) => {
 
 // Getting One
 router.get('/:id', getUser, (req, res) => {
-  res.json(res.user.name);
+  res.json(res.user._id);
 });
 
 // Creating one

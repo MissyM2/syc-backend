@@ -1,21 +1,21 @@
-GET http://localhost:3000/users
+GET http://localhost:3000/syc/users
 
 ###
 
-GET http://localhost:3000/users/68263860ea82c3df708d5291
+GET http://localhost:3000/syc/users/68263e25ea86a5e3e602f792
 
 ###
 
-POST http://localhost:3000/users
+POST http://localhost:3000/syc/users
 Content-type: application/json
 
 {
-  "name": "Beth Lyons",
-  "emailAddress": "beth@example.com"
+  "name": "Sarah Lyons",
+  "emailAddress": "sarah@example.com"
 }
 
 ###
 
-DELETE http://localhost:3000/users/68263860ea82c3df708d5291
+DELETE http://localhost:3000/syc/users/682643dcf37d6f138c88de50
 
 

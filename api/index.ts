@@ -12,6 +12,6 @@ db.once('open', () => console.log('Connected to Database'));
 app.use(express.json());
 
 const usersRouter = require('./routes/user.routes');
-app.use('/users', usersRouter);
+app.use('/syc/users', usersRouter);
 
 app.listen(3000, () => console.log('Server Started'));
