@@ -2,7 +2,7 @@ GET http://localhost:3000/users
 
 ###
 
-GET http://localhost:3000/users/6826314138ab7f1f191507e4
+GET http://localhost:3000/users/68263860ea82c3df708d5291
 
 ###
 
@@ -16,6 +16,6 @@ Content-type: application/json
 
 ###
 
-DELETE http://localhost:3000/users/68263704a72d5da101d7187e
+DELETE http://localhost:3000/users/68263860ea82c3df708d5291
 
 
