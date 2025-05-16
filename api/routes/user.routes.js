@@ -14,7 +14,7 @@ router.get('/', async (req, res) => {
 });
 
 // Getting One
-router.get('/:id', getUser, (req, res) => {
+router.get('users/:id', getUser, (req, res) => {
   res.json(res.user._id);
 });
 
@@ -33,7 +33,7 @@ router.post('/', async (req, res) => {
 });
 
 // Updating One
-router.patch('/:id', getUser, async (req, res) => {
+router.patch('users/:id', getUser, async (req, res) => {
   if (req.body.name != null) {
     res.subscriber.name = req.body.name;
   }
@@ -49,7 +49,7 @@ router.patch('/:id', getUser, async (req, res) => {
 });
 
 // Deleting One
-router.delete('/:id', getUser, async (req, res) => {
+router.delete('users/:id', getUser, async (req, res) => {
   //res.send(res.user._id);
 
   try {

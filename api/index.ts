@@ -15,6 +15,8 @@ app.use(express.json());
 
 const usersRouter = require('./routes/user.routes');
 app.use('/syc/users', usersRouter);
+const closetitemsRouter = require('./routes/closetitem.routes');
+app.use('/syc/closetitems', closetitemsRouter);
 
 const PORT = process.env.PORT || 3000;
 
