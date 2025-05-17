@@ -35,7 +35,7 @@ GET http://localhost:3000/syc/closetitems
 
 ###
 
-GET http://localhost:3000/syc/closetitems/6827780181eef913a1e6f182
+GET http://localhost:3000/syc/closetitems/6827788881eef913a1e6f184
 
 ###
 
@@ -44,9 +44,9 @@ Content-type: application/json
 
 {
   "category": "Footwear",
-  "name": "Tevas",
+  "name": "Hokas",
   "season": "Summer",
-  "size": "8",
-  "desc": "You know, kind of rough.",
+  "size": "10",
+  "desc": "pink and green",
   "rating": "6.8"
 }

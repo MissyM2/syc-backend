@@ -1,98 +1,119 @@
 const express = require('express');
-
+const database = require('../connect');
 const ObjectId = require('mongodb').ObjectId;
-const Closetitem = require('../models/closetitem.model');
 
 let closetitemRoutes = express.Router();
+const Closetitem = require('../models/closetitem.model');
 
-// Getting all
-closetitemRoutes.get('/', async (req, res) => {
-  //res.send('Hello World');
-  try {
-    const closetitem = await Closetitem.find();
-    res.json(closetitem);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-});
-
-// Getting One
-closetitemRoutes.get('closetitems/:id', getClosetitem, (req, res) => {
-  res.json(res.closetitem.id);
-});
-
-// Creating one
-closetitemRoutes.post('/', async (req, res) => {
-  const closetitem = new Closetitem({
-    category: req.body.category,
-    name: req.body.name,
-    season: req.body.season,
-    size: req.body.size,
-    season: req.body.desc,
-    rating: req.body.rating,
-  });
-  try {
-    const newClosetitem = await closetitem.save();
-    res.status(201).json(newClosetitem);
-  } catch (err) {
-    res.status(400).json({ message: err.message });
-  }
-});
-
-// Updating One
-closetitemRoutes.patch('closetitems/:id', getClosetitem, async (req, res) => {
-  if (req.body.category != null) {
-    res.closetitem.category = req.body.category;
-  }
-  if (req.body.name != null) {
-    res.closetitem.name = req.body.name;
-  }
-  if (req.body.season != null) {
-    res.closetitem.season = req.body.season;
-  }
-  if (req.body.size != null) {
-    res.closetitem.size = req.body.size;
-  }
-  if (req.body.desc != null) {
-    res.closetitem.desc = req.body.desc;
-  }
-  if (req.body.rating != null) {
-    res.closetitem.rating = req.body.rating;
-  }
-  try {
-    const updatedClosetitem = await res.closetitem.save();
-    res.json(updatedClosetitem);
-  } catch (err) {
-    res.status(400).json({ message: err.message });
-  }
-});
-
-// Deleting One
-closetitemRoutes.delete('closetitems/:id', getClosetitem, async (req, res) => {
-  //res.send(res.closetitem._id);
+// #1 Retrieve All
+//http://localhost:3000/syc/closetitems
+closetitemRoutes.route('/syc/closetitems').get(async (request, response) => {
+  let db = database.getDb();
 
   try {
-    await Closetitem.deleteOne(res.closetitem._id);
-    res.json({ message: 'Deleted Closetitem' });
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-});
-
-async function getClosetitem(req, res, next) {
-  let closetitem;
-  try {
-    closetitem = await Closetitem.findById(req.params.id);
-    console.log('this is closet item' + closetItem);
-    if (closetitem == null) {
-      return res.status(404).json({ message: 'Cannot find closetitem' });
+    let collection = await db.collection('closetitems');
+    let result = await collection.find({}).toArray();
+    if (result.length > 0) {
+      response.json(result);
     }
   } catch (err) {
-    return res.status(500).json({ message: err.message });
+    response.status(500).json({ message: err.message });
   }
+});
 
-  res.closetitem = closetitem;
-  next();
-}
+//#2 - Retrieve One
+//http://localhost:3000/closetitems/12345
+closetitemRoutes
+  .route('/syc/closetitems/:id')
+  .get(async (request, response) => {
+    const query = { _id: new ObjectId(request.params.id) };
+    let db = database.getDb();
+
+    try {
+      let collection = await db.collection('closetitems');
+      let result = await collection.findOne(query);
+      if (result) {
+        response.json(result);
+      }
+    } catch (err) {
+      response.status(500).json({ message: err.message });
+    }
+  });
+
+///#3 - Create one
+closetitemRoutes.route('/syc/closetitems').post(async (request, response) => {
+  let db = database.getDb();
+  let collection = await db.collection('closetitems');
+
+  try {
+    const takenName = await collection.findOne({
+      category: request.body.category,
+      name: request.body.name,
+      season: request.body.season,
+      size: request.body.size,
+      desc: request.body.desc,
+      rating: request.body.rating,
+    });
+
+    if (takenName) {
+      response.json({ message: 'The clothing item is taken' });
+    } else {
+      let newDocument = {
+        category: request.body.category,
+        name: request.body.name,
+        season: request.body.season,
+        size: request.body.size,
+        desc: request.body.desc,
+        rating: request.body.rating,
+      };
+      let result = await collection.insertOne(newDocument);
+      response.status(201).json(result);
+    }
+  } catch (err) {
+    response.status(400).json({ message: err.message });
+  }
+});
+
+///#4 - Update one
+closetitemRoutes
+  .route('/syc/closetitems/:id')
+  .patch(async (request, response) => {
+    const query = { _id: new ObjectId(request.params.id) };
+    const updates = {
+      $set: {
+        category: request.body.category,
+        name: request.body.name,
+        season: request.body.season,
+        size: request.body.size,
+        desc: request.body.desc,
+        rating: request.body.rating,
+      },
+    };
+
+    let db = database.getDb();
+
+    try {
+      let result = await db.collection('closetitems').updateOne(query, updates);
+      response.json(result);
+    } catch (err) {
+      response.status(400).json({ message: err.message });
+    }
+  });
+
+//#5 - Delete one
+closetitemRoutes
+  .route('/syc/closetitems/:id')
+  .delete(async (request, response) => {
+    const query = { _id: new ObjectId(request.params.id) };
+    let db = database.getDb();
+
+    try {
+      const collection = db.collection('closetitems');
+      let result = await collection.deleteOne(query);
+      response.json(result);
+    } catch (err) {
+      response.status(500).json({ message: err.message });
+    }
+  });
 
 module.exports = closetitemRoutes;
