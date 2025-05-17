@@ -2,7 +2,7 @@ GET http://localhost:3000/syc/users
 
 ###
 
-GET http://localhost:3000/syc/users/68263e4fea86a5e3e602f793
+GET http://localhost:3000/syc/users/68263e69ea86a5e3e602f794
 
 ###
 
@@ -10,23 +10,23 @@ POST http://localhost:3000/syc/users
 Content-type: application/json
 
 {
-  "name": "Jonah Goldberg",
-  "emailAddress": "jonah@example.com"
+  "name": "Jane Seymour",
+  "emailAddress":"jane@example.com"
 }
 
 ###
 
-PATCH http://localhost:3000/syc/users/68263e4fea86a5e3e602f793
+PATCH http://localhost:3000/syc/users/68288be646c7c651f8140205
 Content-type: application/json
 
 {
-  "name": "Mary Ann Collins",
-  "emailAddress":"maryann@example.com"
+  "name": "Katherine of Aragon",
+  "emailAddress":"ka@example.com"
 }
 
 ###
 
-DELETE http://localhost:3000/syc/users/682643dcf37d6f138c88de50
+DELETE http://localhost:3000/syc/users/68288be646c7c651f8140205
 
 
 ###

@@ -2,8 +2,8 @@ require('dotenv').config();
 const connect = require('./connect.js');
 const express = require('express');
 const cors = require('cors');
-const users = require('./routes/user.routes');
-const closetitems = require('./routes/closetitem.routes');
+const users = require('./routes/user.routes.js');
+const closetitems = require('./routes/closetitem.routes.js');
 const multer = require('multer');
 const upload = multer();
 
