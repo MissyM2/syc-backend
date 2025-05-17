@@ -1,9 +1,12 @@
 const express = require('express');
-const router = express.Router();
+
+const ObjectId = require('mongodb').ObjectId;
 const Closetitem = require('../models/closetitem.model');
 
+let closetitemRoutes = express.Router();
+
 // Getting all
-router.get('/', async (req, res) => {
+closetitemRoutes.get('/', async (req, res) => {
   //res.send('Hello World');
   try {
     const closetitem = await Closetitem.find();
@@ -14,15 +17,19 @@ router.get('/', async (req, res) => {
 });
 
 // Getting One
-router.get('closetitems/:id', getClosetitem, (req, res) => {
-  res.json(res.closetitem._id);
+closetitemRoutes.get('closetitems/:id', getClosetitem, (req, res) => {
+  res.json(res.closetitem.id);
 });
 
 // Creating one
-router.post('/', async (req, res) => {
+closetitemRoutes.post('/', async (req, res) => {
   const closetitem = new Closetitem({
+    category: req.body.category,
     name: req.body.name,
-    emailAddress: req.body.emailAddress,
+    season: req.body.season,
+    size: req.body.size,
+    season: req.body.desc,
+    rating: req.body.rating,
   });
   try {
     const newClosetitem = await closetitem.save();
@@ -33,12 +40,24 @@ router.post('/', async (req, res) => {
 });
 
 // Updating One
-router.patch('closetitems/:id', getClosetitem, async (req, res) => {
-  if (req.body.name != null) {
-    res.subscriber.name = req.body.name;
+closetitemRoutes.patch('closetitems/:id', getClosetitem, async (req, res) => {
+  if (req.body.category != null) {
+    res.closetitem.category = req.body.category;
   }
-  if (req.body.email != null) {
-    res.closetitem.email = req.body.emailAddress;
+  if (req.body.name != null) {
+    res.closetitem.name = req.body.name;
+  }
+  if (req.body.season != null) {
+    res.closetitem.season = req.body.season;
+  }
+  if (req.body.size != null) {
+    res.closetitem.size = req.body.size;
+  }
+  if (req.body.desc != null) {
+    res.closetitem.desc = req.body.desc;
+  }
+  if (req.body.rating != null) {
+    res.closetitem.rating = req.body.rating;
   }
   try {
     const updatedClosetitem = await res.closetitem.save();
@@ -49,7 +68,7 @@ router.patch('closetitems/:id', getClosetitem, async (req, res) => {
 });
 
 // Deleting One
-router.delete('closetitems/:id', getClosetitem, async (req, res) => {
+closetitemRoutes.delete('closetitems/:id', getClosetitem, async (req, res) => {
   //res.send(res.closetitem._id);
 
   try {
@@ -64,6 +83,7 @@ async function getClosetitem(req, res, next) {
   let closetitem;
   try {
     closetitem = await Closetitem.findById(req.params.id);
+    console.log('this is closet item' + closetItem);
     if (closetitem == null) {
       return res.status(404).json({ message: 'Cannot find closetitem' });
     }
@@ -75,4 +95,4 @@ async function getClosetitem(req, res, next) {
   next();
 }
 
-module.exports = router;
+module.exports = closetitemRoutes;
