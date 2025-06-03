@@ -1,31 +1,34 @@
 const express = require('express');
 const database = require('../connect');
 const ObjectId = require('mongodb').ObjectId;
+const jwt = require('jsonwebtoken');
+require('dotenv').config({ path: '../.env' });
 
 let closetitemRoutes = express.Router();
-const Closetitem = require('../models/closetitem.model');
 
 // #1 Retrieve All
 //http://localhost:3000/syc/closetitems
-closetitemRoutes.route('/syc/closetitems').get(async (request, response) => {
-  let db = database.getDb();
+closetitemRoutes
+  .route('/syc/closetitems')
+  .get(verifyToken, async (request, response) => {
+    let db = database.getDb();
 
-  try {
-    let collection = await db.collection('closetitems');
-    let result = await collection.find({}).toArray();
-    if (result.length > 0) {
-      response.json(result);
+    try {
+      let collection = await db.collection('closetitems');
+      let result = await collection.find({}).toArray();
+      if (result.length > 0) {
+        response.json(result);
+      }
+    } catch (err) {
+      response.status(500).json({ message: err.message });
     }
-  } catch (err) {
-    response.status(500).json({ message: err.message });
-  }
-});
+  });
 
 //#2 - Retrieve One
 //http://localhost:3000/closetitems/12345
 closetitemRoutes
   .route('/syc/closetitems/:id')
-  .get(async (request, response) => {
+  .get(verifyToken, async (request, response) => {
     const query = { _id: new ObjectId(request.params.id) };
     let db = database.getDb();
 
@@ -41,43 +44,49 @@ closetitemRoutes
   });
 
 ///#3 - Create one
-closetitemRoutes.route('/syc/closetitems').post(async (request, response) => {
-  let db = database.getDb();
-  let collection = await db.collection('closetitems');
+closetitemRoutes
+  .route('/syc/closetitems')
+  .post(verifyToken, async (request, response) => {
+    let db = database.getDb();
+    let collection = await db.collection('closetitems');
 
-  try {
-    const takenName = await collection.findOne({
-      category: request.body.category,
-      name: request.body.name,
-      season: request.body.season,
-      size: request.body.size,
-      desc: request.body.desc,
-      rating: request.body.rating,
-    });
-
-    if (takenName) {
-      response.json({ message: 'The clothing item is taken' });
-    } else {
-      let newDocument = {
+    try {
+      const takenName = await collection.findOne({
         category: request.body.category,
         name: request.body.name,
         season: request.body.season,
         size: request.body.size,
         desc: request.body.desc,
         rating: request.body.rating,
-      };
-      let result = await collection.insertOne(newDocument);
-      response.status(201).json(result);
+        dateCreated: request.body.dateCreated,
+        imageId: request.body.imageId,
+      });
+
+      if (takenName) {
+        response.json({ message: 'The clothing item is taken' });
+      } else {
+        let newDocument = {
+          category: request.body.category,
+          name: request.body.name,
+          season: request.body.season,
+          size: request.body.size,
+          desc: request.body.desc,
+          rating: request.body.rating,
+          dateCreated: request.body.dateCreated,
+          imageId: request.body.imageId,
+        };
+        let result = await collection.insertOne(newDocument);
+        response.status(201).json(result);
+      }
+    } catch (err) {
+      response.status(400).json({ message: err.message });
     }
-  } catch (err) {
-    response.status(400).json({ message: err.message });
-  }
-});
+  });
 
 ///#4 - Update one
 closetitemRoutes
   .route('/syc/closetitems/:id')
-  .patch(async (request, response) => {
+  .patch(verifyToken, async (request, response) => {
     const query = { _id: new ObjectId(request.params.id) };
     const updates = {
       $set: {
@@ -103,7 +112,7 @@ closetitemRoutes
 //#5 - Delete one
 closetitemRoutes
   .route('/syc/closetitems/:id')
-  .delete(async (request, response) => {
+  .delete(verifyToken, async (request, response) => {
     const query = { _id: new ObjectId(request.params.id) };
     let db = database.getDb();
 
@@ -115,5 +124,27 @@ closetitemRoutes
       response.status(500).json({ message: err.message });
     }
   });
+
+function verifyToken(request, response, next) {
+  const authHeaders = request.headers['authorization'];
+  const token = authHeaders && authHeaders.split(' ')[1];
+  if (!token) {
+    return response
+      .status(401)
+      .json({ message: 'Authentication token is missing' });
+  }
+  console.log('token is ' + token);
+  jwt.verify(token, process.env.SECRET_KEY, (error, user) => {
+    console.log('what is user? ' + JSON.stringify(user));
+    if (error) {
+      return response.status(403).json({ message: 'Invalid Token' });
+    }
+
+    console.log('user is ' + user);
+
+    //request.body.user = user;
+    next();
+  });
+}
 
 module.exports = closetitemRoutes;
