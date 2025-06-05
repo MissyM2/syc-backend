@@ -4,7 +4,8 @@ const express = require('express');
 const cors = require('cors');
 const users = require('./routes/user.routes.js');
 const closetitems = require('./routes/closetitem.routes.js');
-const multer = require('multer');
+const awsRoutes = require('./routes/aws.routes.js');
+const multer = require('multer'); //to receive multi-part form data
 const upload = multer();
 
 const app = express();
@@ -12,9 +13,10 @@ const PORT = 3000;
 
 app.use(cors());
 app.use(express.json());
-app.use(upload.any());
+app.use(upload.any()); //from multer
 app.use(users);
 app.use(closetitems);
+app.use(awsRoutes);
 
 //const mongoose = require('mongoose');
 

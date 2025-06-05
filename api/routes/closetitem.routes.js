@@ -44,14 +44,26 @@ closetitemRoutes
   });
 
 ///#3 - Create one
-closetitemRoutes
-  .route('/syc/closetitems')
-  .post(verifyToken, async (request, response) => {
-    let db = database.getDb();
-    let collection = await db.collection('closetitems');
+closetitemRoutes.route('/syc/closetitems').post(async (request, response) => {
+  let db = database.getDb();
+  let collection = await db.collection('closetitems');
 
-    try {
-      const takenName = await collection.findOne({
+  try {
+    const takenName = await collection.findOne({
+      category: request.body.category,
+      name: request.body.name,
+      season: request.body.season,
+      size: request.body.size,
+      desc: request.body.desc,
+      rating: request.body.rating,
+      dateCreated: request.body.dateCreated,
+      imageId: request.body.imageId,
+    });
+
+    if (takenName) {
+      response.json({ message: 'The clothing item is taken' });
+    } else {
+      let newDocument = {
         category: request.body.category,
         name: request.body.name,
         season: request.body.season,
@@ -60,33 +72,19 @@ closetitemRoutes
         rating: request.body.rating,
         dateCreated: request.body.dateCreated,
         imageId: request.body.imageId,
-      });
-
-      if (takenName) {
-        response.json({ message: 'The clothing item is taken' });
-      } else {
-        let newDocument = {
-          category: request.body.category,
-          name: request.body.name,
-          season: request.body.season,
-          size: request.body.size,
-          desc: request.body.desc,
-          rating: request.body.rating,
-          dateCreated: request.body.dateCreated,
-          imageId: request.body.imageId,
-        };
-        let result = await collection.insertOne(newDocument);
-        response.status(201).json(result);
-      }
-    } catch (err) {
-      response.status(400).json({ message: err.message });
+      };
+      let result = await collection.insertOne(newDocument);
+      response.status(201).json(result);
     }
-  });
+  } catch (err) {
+    response.status(400).json({ message: err.message });
+  }
+});
 
 ///#4 - Update one
 closetitemRoutes
   .route('/syc/closetitems/:id')
-  .patch(verifyToken, async (request, response) => {
+  .patch(async (request, response) => {
     const query = { _id: new ObjectId(request.params.id) };
     const updates = {
       $set: {
@@ -133,17 +131,14 @@ function verifyToken(request, response, next) {
       .status(401)
       .json({ message: 'Authentication token is missing' });
   }
-  console.log('token is ' + token);
+
   jwt.verify(token, process.env.SECRET_KEY, (error, user) => {
-    console.log('what is user? ' + JSON.stringify(user));
-    if (error) {
+    if (!error) {
+      request.user = user.name;
+      next();
+    } else {
       return response.status(403).json({ message: 'Invalid Token' });
     }
-
-    console.log('user is ' + user);
-
-    //request.body.user = user;
-    next();
   });
 }
 
