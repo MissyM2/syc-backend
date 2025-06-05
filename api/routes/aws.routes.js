@@ -7,7 +7,6 @@ const {
   S3Client,
   PutObjectCommand,
   GetObjectCommand,
-  DeleteObjectCommand,
 } = require('@aws-sdk/client-s3');
 
 let awsRoutes = express.Router();
@@ -54,22 +53,6 @@ awsRoutes.route('/syc/images').post(verifyToken, async (request, response) => {
   const data = await s3Client.send(new PutObjectCommand(bucketParams));
   response.json(data);
 });
-
-//#3 - Delete one
-// awsRoutes
-//   .route('/syc/images/:id')
-//   .delete(verifyToken, async (request, response) => {
-//     const query = { _id: new ObjectId(request.params.id) };
-//     let db = database.getDb();
-
-//     try {
-//       const collection = db.collection('images');
-//       let result = await collection.deleteOne(query);
-//       response.json(result);
-//     } catch (err) {
-//       response.status(500).json({ message: err.message });
-//     }
-//   });
 
 function verifyToken(request, response, next) {
   const authHeaders = request.headers['authorization'];
