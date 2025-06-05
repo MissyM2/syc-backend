@@ -13,6 +13,7 @@ let awsRoutes = express.Router();
 
 const s3Bucket = 'sycstorage';
 
+// instantiates and configures S3Client so we can upload
 const s3Client = new S3Client({
   region: 'us-east-1',
   credentials: {
