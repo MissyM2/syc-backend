@@ -28,7 +28,6 @@ app.use(awsRoutes);
 //app.use('/syc/users', usersRouter);
 
 //app.use('/syc/closetitems', closetitemsRouter);
-console.log('before app listen');
 app.listen(PORT, () => {
   connect.connectToServer();
   console.log(`Server is running on port ${PORT}`);
