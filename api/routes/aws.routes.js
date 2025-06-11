@@ -58,7 +58,6 @@ awsRoutes.route('/images').post(verifyToken, async (request, response) => {
   };
 
   const data = await s3Client.send(new PutObjectCommand(bucketParams));
-  console.log('inside awsRoutes: data: ' + data);
 
   response.json(data);
 });
