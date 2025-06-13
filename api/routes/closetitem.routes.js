@@ -66,7 +66,7 @@ closetitemRoutes.route('/syc/closetitems').post(async (request, response) => {
       let newDocument = {
         category: request.body.category,
         name: request.body.name,
-        season: request.body.season,
+        season: request.body.seasons,
         size: request.body.size,
         desc: request.body.desc,
         rating: request.body.rating,

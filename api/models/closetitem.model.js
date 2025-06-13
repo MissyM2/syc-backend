@@ -5,12 +5,12 @@ const closetitemSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  name:{
-    type:String,
-    required:true,
-  },
-  season: {
+  name: {
     type: String,
+    required: true,
+  },
+  seasons: {
+    type: [String],
     required: true,
   },
   size: {
