@@ -51,20 +51,22 @@ authRouter.route('/api/login').post(async (request, response) => {
     .collection('users')
     .findOne({ emailAddress: request.body.emailAddress });
 
-  if (user) {
-    let confirmation = await bcrypt.compare(
-      request.body.password,
-      user.password
-    );
-    if (confirmation) {
-      const token = jwt.sign(user, process.env.SECRET_KEY, { expiresIn: '1h' });
-      response.json({ success: true, token });
-    } else {
-      response.json({ success: false, message: 'Incorrect Password' });
-    }
-  } else {
-    response.json({ success: false, message: 'User not found' });
+  if (!user) {
+    return response.status(401).json({ message: 'Invalid credentials' });
   }
+
+  const passwordMatch = await bcrypt.compare(
+    request.body.password,
+    user.password
+  );
+
+  if (!passwordMatch) {
+    return response.status(401).json({ message: 'Invalid credentials' });
+  }
+
+  const token = jwt.sign(user, process.env.SECRET_KEY, { expiresIn: '1h' });
+
+  response.json({ success: true, user, token });
 });
 
 module.exports = authRouter;
