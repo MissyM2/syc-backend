@@ -5,7 +5,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 require('dotenv').config({ path: '../.env' });
 
-let router = express.Router();
+let authRouter = express.Router();
 const User = require('../models/user.model');
 const { hash } = require('crypto');
 
@@ -13,7 +13,7 @@ const SALT_ROUNDS = 6;
 
 //  Register user
 
-router.route('/api/register').post(async (request, response) => {
+authRouter.route('/api/register').post(async (request, response) => {
   console.log('made it to authRoutes.');
 
   let db = database.getDb();
@@ -42,10 +42,29 @@ router.route('/api/register').post(async (request, response) => {
   }
 });
 
-// router.route('/api/register').post(async (request, response) => {
-//   res.send('inside authRoutes!');
-//   // let db = database.getDb();
-//   // let collection = await db.collection('users');
-// });
+// Login User
 
-module.exports = router;
+authRouter.route('/api/login').post(async (request, response) => {
+  let db = database.getDb();
+
+  const user = await db
+    .collection('users')
+    .findOne({ emailAddress: request.body.emailAddress });
+
+  if (user) {
+    let confirmation = await bcrypt.compare(
+      request.body.password,
+      user.password
+    );
+    if (confirmation) {
+      const token = jwt.sign(user, process.env.SECRET_KEY, { expiresIn: '1h' });
+      response.json({ success: true, token });
+    } else {
+      response.json({ success: false, message: 'Incorrect Password' });
+    }
+  } else {
+    response.json({ success: false, message: 'User not found' });
+  }
+});
+
+module.exports = authRouter;
