@@ -35,7 +35,7 @@ const loginUser = async (req, res) => {
   if (user && (await user.matchPassword(password))) {
     res.json({
       _id: user._id,
-      name: user.firstName,
+      name: user.name,
       email: user.email,
       userToken: generateToken(user._id),
     });
@@ -52,7 +52,7 @@ const getUserProfile = async (req, res) => {
   if (user) {
     res.json({
       id: user._id,
-      firstName: user.name,
+      name: user.name,
       email: user.email,
       createdAt: user.createdAt,
       updatedAt: user.updatedAt,
