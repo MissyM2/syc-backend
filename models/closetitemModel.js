@@ -1,30 +1,20 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
-const closetitemSchema = new mongoose.Schema({
-  category: {
-    type: String,
-    required: true,
+const closetitemSchema = new mongoose.Schema(
+  {
+    category: { type: String, required: true },
+    name: { type: String, required: true },
+    seasons: { type: [String], required: true },
+    size: { type: String, required: true },
+    desc: { type: String, required: false },
+    rating: { type: String, required: false },
+    user: { type: mongoose.Schema.Types.ObjectId, ref: 'Closetitem' },
   },
-  name: {
-    type: String,
-    required: true,
-  },
-  seasons: {
-    type: [String],
-    required: true,
-  },
-  size: {
-    type: String,
-    required: true,
-  },
-  desc: {
-    type: String,
-    required: false,
-  },
-  rating: {
-    type: String,
-    required: false,
-  },
-});
+  {
+    timestamps: true,
+  }
+);
 
-module.exports = mongoose.model('Closetitem', closetitemSchema);
+const Closetitem = mongoose.model('Closetitem', closetitemSchema);
+
+export default Closetitem;

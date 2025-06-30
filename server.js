@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import connectDB from './config/db.js';
 import userRoutes from './routes/userRoutes.js';
+import closetitemRoutes from './routes/closetitemRoutes.js';
 import { errorHandler, notFound } from './middleware/errorMiddleware.js';
 
 const app = express();
@@ -17,7 +18,8 @@ app.use(express.json()); // Middleware to parse JSON body
 app.use(cors({ origin: '*' }));
 
 // API routes
-app.use('/api/users', userRoutes); // Mount your routes
+app.use('/api/users', userRoutes);
+app.use('/api/closetitems', closetitemRoutes);
 
 // Middleware
 app.use(notFound);
