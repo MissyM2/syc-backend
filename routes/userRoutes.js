@@ -1,5 +1,5 @@
 import express from 'express';
-import { protect } from '../middleware/authMiddleware.js';
+import { verifyToken } from '../middleware/authMiddleware.js';
 import {
   registerUser,
   loginUser,
@@ -19,7 +19,7 @@ router.post('/register', registerUser);
 router.post('/login', loginUser);
 
 // get one user's profile
-router.route('/profile').get(protect, getUserProfile);
+router.route('/profile').get(verifyToken, getUserProfile);
 
 // Add more routes for PUT, DELETE as needed
 

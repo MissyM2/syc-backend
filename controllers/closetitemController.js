@@ -1,6 +1,7 @@
 import Closetitem from '../models/closetitemModel.js';
+import User from '../models/userModel.js';
 
-// #1 Retrieve All
+// #1 Retrieve All (for admin only) (add group by)
 //http://localhost:3000/syc/closetitems
 const getAllClosetitems = async (req, res) => {
   // let db = database.getDb();
@@ -15,7 +16,10 @@ const getAllClosetitems = async (req, res) => {
   //   res.status(500).json({ message: err.message });
   // }
   try {
-    const closetitems = await Closetitem.find();
+    const closetitems = await Closetitem.find().populate(
+      'userId',
+      'userName email'
+    );
     console.log('closetitems are: ' + JSON.stringify(closetitems));
     res.json(closetitems);
   } catch (err) {
@@ -42,50 +46,52 @@ const getAllClosetitems = async (req, res) => {
 
 ///#3 - Create one
 const createClosetitem = async (req, res) => {
-  const {
-    category,
-    name,
-    season,
-    size,
-    desc,
-    rating,
-    dateCreated,
-    imageId,
-    user,
-  } = req.body;
+  try {
+    const { category, itemName, seasons, size, desc, rating, imageId, userId } =
+      req.body;
+    console.log('createclosetitem:req.body ' + JSON.stringify(req.body));
 
-  const closetitemExists = await Closetitem.findOne({ name });
+    const closetitemExists = await Closetitem.findOne({ itemName });
+    console.log('createclosetitem: exists ' + closetitemExists);
 
-  if (closetitemExists) {
-    res.status(404);
-    throw new Error('Closetitem already exists');
-  }
+    if (closetitemExists) {
+      res.status(404);
+      throw new Error('Closetitem already exists');
+    }
 
-  const closetitem = await Closetitem.create({
-    category,
-    name,
-    season,
-    size,
-    desc,
-    rating,
-    imageId,
-    user,
-  });
-
-  if (closetitem) {
-    res.status(201).json({
-      category: closetitem.category,
-      name: closetitem.name,
-      season: closetitem.season,
-      size: closetitem.size,
-      desc: closetitem.desc,
-      rating: closetitem.rating,
-      imageId: closetitem.imageId,
-      user: closetitem.user,
+    const newClosetitem = new Closetitem({
+      category,
+      itemName,
+      seasons,
+      size,
+      desc,
+      rating,
+      imageId,
+      userId,
     });
-  } else {
-    res.status(400);
-    throw new Error('Invalid user data');
+
+    console.log(
+      'createclosetitem:newClosetiem ' + JSON.stringify(newClosetitem)
+    );
+
+    const savedClosetitem = await newClosetitem.save();
+    console.log(
+      'createclosetitem:savedClosetiem ' + JSON.stringify(savedClosetitem)
+    );
+
+    // Update the user's closetitems array
+    await User.findByIdAndUpdate(
+      userId,
+      {
+        $push: { closetitems: savedClosetitem._id },
+      },
+      { new: true }
+    );
+
+    res.status(201).json(savedClosetitem);
+  } catch (error) {
+    res.status(500);
+    throw new Error({ message: error.message });
   }
 };
 

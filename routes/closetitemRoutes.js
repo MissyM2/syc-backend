@@ -1,5 +1,5 @@
 import express from 'express';
-//import { protect } from '../middleware/authMiddleware.js';
+import { verifyToken } from '../middleware/authMiddleware.js';
 import {
   getAllClosetitems,
   // getClosetitem,
@@ -14,16 +14,16 @@ const router = express.Router();
 router.route('/allclosetitems').get(getAllClosetitems);
 
 // Get closetitem
-//router.route('/closetitem').get(protect, getClosetitem);
+//router.route('/closetitem').get(verifyToken, getClosetitem);
 
 // Create a closetitem
-router.route('/create-closetitem').post(createClosetitem);
+router.route('/create-closetitem').post(verifyToken, createClosetitem);
 
 // Update a closetitem
-//router.route('/update-closetitem').put(protect, updateClosetitem);
+//router.route('/update-closetitem').put(verifyToken, updateClosetitem);
 
 // delete a closetitem
-//router.route('/delete-closetitem').delete(protect, deleteClosetitem);
+//router.route('/delete-closetitem').delete(verifyToken, deleteClosetitem);
 
 // Add more routes for PUT, DELETE as needed
 

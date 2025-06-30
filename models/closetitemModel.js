@@ -3,12 +3,13 @@ import mongoose from 'mongoose';
 const closetitemSchema = new mongoose.Schema(
   {
     category: { type: String, required: true },
-    name: { type: String, required: true },
+    itemName: { type: String, required: true },
     seasons: { type: [String], required: true },
     size: { type: String, required: true },
     desc: { type: String, required: false },
     rating: { type: String, required: false },
-    user: { type: mongoose.Schema.Types.ObjectId, ref: 'Closetitem' },
+    imageId: { type: String, required: false },
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   },
   {
     timestamps: true,
