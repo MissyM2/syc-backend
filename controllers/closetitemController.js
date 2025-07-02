@@ -45,21 +45,21 @@ const getClosetitemsByUserId = async (req, res) => {
 // };
 
 ///#3 - Create one
-const createClosetitem = async (req, res) => {
+const addClosetitem = async (req, res) => {
   try {
     const { category, itemName, seasons, size, desc, rating, imageId, userId } =
       req.body;
-    console.log('createclosetitem:req.body ' + JSON.stringify(req.body));
+    //console.log('createclosetitem:req.body ' + JSON.stringify(req.body));
 
     const closetitemExists = await Closetitem.findOne({ itemName });
-    console.log('createclosetitem: exists ' + closetitemExists);
+    //console.log('createclosetitem: exists ' + closetitemExists);
 
     if (closetitemExists) {
       res.status(404);
       throw new Error('Closetitem already exists');
     }
 
-    const newClosetitem = new Closetitem({
+    const createdClosetitem = await Closetitem.create({
       category,
       itemName,
       seasons,
@@ -70,25 +70,17 @@ const createClosetitem = async (req, res) => {
       userId,
     });
 
-    console.log(
-      'createclosetitem:newClosetiem ' + JSON.stringify(newClosetitem)
-    );
-
-    const savedClosetitem = await newClosetitem.save();
-    console.log(
-      'createclosetitem:savedClosetiem ' + JSON.stringify(savedClosetitem)
-    );
+    const itemId = createdClosetitem._id;
 
     // Update the user's closetitems array
     await User.findByIdAndUpdate(
       userId,
       {
-        $push: { closetitems: savedClosetitem._id },
+        $push: { closetitems: itemId },
       },
       { new: true }
     );
-
-    res.status(201).json(savedClosetitem);
+    res.status(201).json(createdClosetitem);
   } catch (error) {
     res.status(500);
     throw new Error({ message: error.message });
@@ -137,7 +129,7 @@ export {
   getAllClosetitems,
   getClosetitemsByUserId,
   //getClosetitem,
-  createClosetitem,
+  addClosetitem,
   //updateClosetitem,
   //deleteClosetitem,
 };

@@ -4,7 +4,7 @@ import {
   getAllClosetitems,
   getClosetitemsByUserId,
   // getClosetitem,
-  createClosetitem,
+  addClosetitem,
   // updateClosetitem,
   // deleteClosetitem,
 } from '../controllers/closetitemController.js';
@@ -21,7 +21,7 @@ router.route('/user/:userId/closetitems').get(getClosetitemsByUserId);
 //router.route('/closetitem').get(verifyToken, getClosetitem);
 
 // Create a closetitem
-router.route('/create-closetitem').post(verifyToken, createClosetitem);
+router.route('/addclosetitem').post(addClosetitem);
 
 // Update a closetitem
 //router.route('/update-closetitem').put(verifyToken, updateClosetitem);
