@@ -2,6 +2,7 @@ import express from 'express';
 import { verifyToken } from '../middleware/authMiddleware.js';
 import {
   getAllClosetitems,
+  getClosetitemsByUserId,
   // getClosetitem,
   createClosetitem,
   // updateClosetitem,
@@ -12,6 +13,9 @@ const router = express.Router();
 
 // Get all closetitems
 router.route('/allclosetitems').get(getAllClosetitems);
+
+// get all closetitems for logged-in user
+router.route('/user/:userId').get(getClosetitemsByUserId);
 
 // Get closetitem
 //router.route('/closetitem').get(verifyToken, getClosetitem);

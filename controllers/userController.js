@@ -27,6 +27,7 @@ const registerUser = async (req, res) => {
 };
 
 const loginUser = async (req, res) => {
+  console.log('be:loginuser, made it');
   const { email, password } = req.body;
 
   //check if user email exists in db

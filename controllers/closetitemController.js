@@ -2,19 +2,7 @@ import Closetitem from '../models/closetitemModel.js';
 import User from '../models/userModel.js';
 
 // #1 Retrieve All (for admin only) (add group by)
-//http://localhost:3000/syc/closetitems
 const getAllClosetitems = async (req, res) => {
-  // let db = database.getDb();
-
-  // try {
-  //   let collection = await db.collection('closetitems');
-  //   let result = await collection.find({}).toArray();
-  //   if (result.length > 0) {
-  //     res.json(result);
-  //   }
-  // } catch (err) {
-  //   res.status(500).json({ message: err.message });
-  // }
   try {
     const closetitems = await Closetitem.find().populate(
       'userId',
@@ -23,6 +11,20 @@ const getAllClosetitems = async (req, res) => {
     console.log('closetitems are: ' + JSON.stringify(closetitems));
     res.json(closetitems);
   } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+// #1 Retrieve All (for admin only) (add group by)
+const getClosetitemsByUserId = async (req, res) => {
+  console.log('must fix this to get user items');
+  try {
+    const userId = req.params.userId;
+    console.log('getClosetitemsByUserId:what is req.params.userId ' + userId);
+    const closetitems = await Closetitem.find({ user: userId });
+    res.status(200).json({ closetitems });
+  } catch (err) {
+    console.log(err);
     res.status(500).json({ message: err.message });
   }
 };
@@ -135,6 +137,7 @@ const createClosetitem = async (req, res) => {
 
 export {
   getAllClosetitems,
+  getClosetitemsByUserId,
   //getClosetitem,
   createClosetitem,
   //updateClosetitem,
