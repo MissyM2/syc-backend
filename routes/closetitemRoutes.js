@@ -15,7 +15,7 @@ const router = express.Router();
 router.route('/allclosetitems').get(getAllClosetitems);
 
 // get all closetitems for logged-in user
-router.route('/user/:userId').get(getClosetitemsByUserId);
+router.route('/user/:userId/closetitems').get(getClosetitemsByUserId);
 
 // Get closetitem
 //router.route('/closetitem').get(verifyToken, getClosetitem);

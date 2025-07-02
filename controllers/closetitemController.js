@@ -8,7 +8,6 @@ const getAllClosetitems = async (req, res) => {
       'userId',
       'userName email'
     );
-    console.log('closetitems are: ' + JSON.stringify(closetitems));
     res.json(closetitems);
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -17,11 +16,10 @@ const getAllClosetitems = async (req, res) => {
 
 // #1 Retrieve All (for admin only) (add group by)
 const getClosetitemsByUserId = async (req, res) => {
-  console.log('must fix this to get user items');
   try {
     const userId = req.params.userId;
-    console.log('getClosetitemsByUserId:what is req.params.userId ' + userId);
-    const closetitems = await Closetitem.find({ user: userId });
+    const closetitems = await Closetitem.find({ userId: userId });
+
     res.status(200).json({ closetitems });
   } catch (err) {
     console.log(err);
