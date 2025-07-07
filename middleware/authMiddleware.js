@@ -37,6 +37,7 @@ import User from '../models/userModel.js';
 // };
 
 function verifyToken(request, response, next) {
+  console.log('verifyToken, request.body: ' + JSON.stringify(request.body));
   try {
     const authHeaders = request.headers['authorization'];
     const token = authHeaders && authHeaders.split(' ')[1];

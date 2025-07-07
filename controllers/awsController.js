@@ -19,6 +19,7 @@ const s3Client = new S3Client({
 //#1 - Retrieve One
 //http://localhost:3000/images/12345
 const getImage = async (request, response) => {
+  console.log('inside getImage, request is : ' + JSON.stringify(request.body));
   try {
     const id = request.params.id;
     const bucketParams = {
@@ -39,29 +40,30 @@ const getImage = async (request, response) => {
 };
 
 ///#2 - Create one
-// const addImage = async (request, response) => {
-//   try {
-//     console.log('inside addImage: what is request? ' + request.files);
-//     const file = request.files[0];
+const addImage = async (request, response) => {
+  console.log('inside addImage, request is : ' + JSON.stringify(request.body));
+  try {
+    console.log('inside addImage: what is request? ' + request.files);
+    const file = request.files[0];
 
-//     console.log('what is file? ' + file);
-//     const bucketParams = {
-//       Bucket: s3Bucket,
-//       Key: file.originalname,
-//       Body: file.buffer,
-//     };
+    console.log('what is file? ' + file);
+    const bucketParams = {
+      Bucket: s3Bucket,
+      Key: file.originalname,
+      Body: file.buffer,
+    };
 
-//     console.log('what is bucketParams? ' + JSON.stringify(bucketParams));
+    console.log('what is bucketParams? ' + JSON.stringify(bucketParams));
 
-//     const data = await s3Client.send(new PutObjectCommand(bucketParams));
+    const data = await s3Client.send(new PutObjectCommand(bucketParams));
 
-//     console.log('what is data? ' + JSON.stringify(data));
+    console.log('what is data? ' + JSON.stringify(data));
 
-//     response.json(data);
-//   } catch (err) {
-//     console.log(err);
-//   }
-// };
+    response.json(data);
+  } catch (err) {
+    console.log(err);
+  }
+};
 
-// export { getImage, addImage };
-export { getImage };
+export { getImage, addImage };
+//export { getImage };
