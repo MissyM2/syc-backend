@@ -2,17 +2,23 @@ import User from '../models/userModel.js';
 import generateToken from '../utils/generateToken.js';
 
 const registerUser = async (req, res) => {
+  console.log('registerUser');
+  console.log('req 1 ' + JSON.stringify(req.body));
   const { userName, email, password, closetitems } = req.body;
 
   // check if email exists in db
   const userExists = await User.findOne({ email });
+  console.log('userExists ' + userExists);
 
   if (userExists) {
     res.status(404);
     throw new Error('User already exists');
   }
 
+  console.log('req ' + JSON.stringify(req.body));
+
   const user = await User.create({ userName, email, password, closetitems });
+  console.log('user ' + JSON.stringify(user));
 
   if (user) {
     res.status(201).json({

@@ -7,20 +7,20 @@ import {
   getAllUsers,
 } from '../controllers/userController.js';
 
-const router = express.Router();
+const userRoutes = express.Router();
 
 // Get all users
-router.get('/allusers', getAllUsers);
+userRoutes.get('/allusers', getAllUsers);
 
 // Create a new user
-router.post('/register', registerUser);
+userRoutes.post('/register', registerUser);
 
 // login user
-router.post('/login', loginUser);
+userRoutes.post('/login', loginUser);
 
 // get one user's profile
-router.route('/profile').get(verifyToken, getUserProfile);
+userRoutes.route('/profile').get(verifyToken, getUserProfile);
 
 // Add more routes for PUT, DELETE as needed
 
-export default router;
+export default userRoutes;

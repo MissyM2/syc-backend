@@ -46,11 +46,11 @@ const getClosetitemsByUserId = async (req, res) => {
 
 ///#3 - Create one
 const addClosetitem = async (req, res) => {
-  try {
-    const { category, itemName, seasons, size, desc, rating, imageId, userId } =
-      req.body;
-    //console.log('createclosetitem:req.body ' + JSON.stringify(req.body));
+  const { category, itemName, seasons, size, desc, rating, imageId, userId } =
+    req.body;
+  //console.log('createclosetitem:req.body ' + JSON.stringify(req.body));
 
+  try {
     const closetitemExists = await Closetitem.findOne({ itemName });
     //console.log('createclosetitem: exists ' + closetitemExists);
 
@@ -59,28 +59,34 @@ const addClosetitem = async (req, res) => {
       throw new Error('Closetitem already exists');
     }
 
-    const createdClosetitem = await Closetitem.create({
-      category,
-      itemName,
-      seasons,
-      size,
-      desc,
-      rating,
-      imageId,
-      userId,
-    });
+    const closetitemData = {
+      category: req.body.category,
+      itemName: req.body.itemName,
+      seasons: req.body.seasons,
+      size: req.body.size,
+      desc: req.body.desc,
+      rating: req.body.rating,
+      imageId: req.body.imageId,
+      userId: req.body.userId,
+    };
 
-    const itemId = createdClosetitem._id;
+    const createdClosetitem = await Closetitem.create(closetitemData);
+    //console.log('what is createdClosetitem ' + createdClosetitem);
+    // If the creation was successful, you can return the created document or a success message
 
-    // Update the user's closetitems array
-    await User.findByIdAndUpdate(
-      userId,
-      {
-        $push: { closetitems: itemId },
-      },
-      { new: true }
-    );
-    res.status(201).json(createdClosetitem);
+    if (createdClosetitem != null) {
+      const itemId = createdClosetitem._id;
+
+      // Update the user's closetitems array
+      await User.findByIdAndUpdate(
+        userId,
+        {
+          $push: { closetitems: itemId },
+        },
+        { new: true }
+      );
+      res.status(201).json(createdClosetitem);
+    }
   } catch (error) {
     res.status(500);
     throw new Error({ message: error.message });
@@ -93,7 +99,7 @@ const addClosetitem = async (req, res) => {
 //   const updates = {
 //     $set: {
 //       category: req.body.category,
-//       name: req.body.name,
+//       itemName: req.body.itemName,
 //       season: req.body.season,
 //       size: req.body.size,
 //       desc: req.body.desc,

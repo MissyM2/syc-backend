@@ -9,26 +9,26 @@ import {
   // deleteClosetitem,
 } from '../controllers/closetitemController.js';
 
-const router = express.Router();
+const closetitemRoutes = express.Router();
 
 // Get all closetitems
-router.route('/allclosetitems').get(getAllClosetitems);
+closetitemRoutes.route('/allclosetitems').get(getAllClosetitems);
 
 // get all closetitems for logged-in user
-router.route('/user/:userId/closetitems').get(getClosetitemsByUserId);
+closetitemRoutes.route('/user/:userId/closetitems').get(getClosetitemsByUserId);
 
 // Get closetitem
-//router.route('/closetitem').get(verifyToken, getClosetitem);
+//closetitemRoutes.route('/closetitem').get(verifyToken, getClosetitem);
 
 // Create a closetitem
-router.route('/addclosetitem').post(addClosetitem);
+closetitemRoutes.route('/addclosetitem').post(addClosetitem);
 
 // Update a closetitem
-//router.route('/update-closetitem').put(verifyToken, updateClosetitem);
+//closetitemRoutes.route('/update-closetitem').put(verifyToken, updateClosetitem);
 
 // delete a closetitem
-//router.route('/delete-closetitem').delete(verifyToken, deleteClosetitem);
+//closetitemRoutes.route('/delete-closetitem').delete(verifyToken, deleteClosetitem);
 
 // Add more routes for PUT, DELETE as needed
 
-export default router;
+export default closetitemRoutes;
