@@ -1,6 +1,6 @@
 import 'dotenv/config.js';
 import express from 'express';
-//import { verifyToken } from '../middleware/authMiddleware.js';
+import { verifyToken } from '../middleware/authMiddleware.js';
 import multer from 'multer';
 import { uploadImage } from '../controllers/awsController.js';
 
@@ -15,6 +15,8 @@ const upload = multer({ storage: multer.memoryStorage() });
 
 ///#2 - Create one
 //awsRoutes.route('/uploadimage').post(addImage);
-awsRoutes.route('/upload-image').post(upload.single('image'), uploadImage);
+awsRoutes
+  .route('/upload-image')
+  .post(verifyToken, upload.single('image'), uploadImage);
 
 export default awsRoutes;
