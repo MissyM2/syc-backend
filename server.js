@@ -16,12 +16,12 @@ connectDB();
 
 // body parser
 app.use(express.json()); // Middleware to parse JSON body
-
+app.use(express.urlencoded({ extended: true }));
 // CORS
 app.use(cors({ origin: '*' }));
 
 // Multer
-app.use(upload.any());
+//app.use(upload.any());
 
 // API routes
 app.use('/api/users', userRoutes);

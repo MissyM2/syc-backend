@@ -36,27 +36,28 @@ import User from '../models/userModel.js';
 //   }
 // };
 
-function verifyToken(request, response, next) {
-  console.log('verifyToken, request.body: ' + JSON.stringify(request.body));
+function verifyToken(req, res, next) {
+  console.log('verifyToken, req.body: ' + JSON.stringify(req.body));
+  console.log('verifyToken, req.path: ' + JSON.stringify(req.path));
   try {
-    const authHeaders = request.headers['authorization'];
+    const authHeaders = req.headers['authorization'];
     const token = authHeaders && authHeaders.split(' ')[1];
     console.log('verifyToken: what is token after split? ' + token);
     if (!token) {
       console.log('there is no token ');
-      return response
+      return res
         .status(401)
         .json({ message: 'Authentication token is missing' });
     }
-    console.log('verifyToken: what is token before verify? ' + token);
-    console.log(
-      'verifyToken: process.env.JWT_SECRET ' + process.env.JWT_SECRET
-    );
+    // console.log('verifyToken: what is token before verify? ' + token);
+    // console.log(
+    //   'verifyToken: process.env.JWT_SECRET ' + process.env.JWT_SECRET
+    // );
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     console.log('what is decoded? ' + JSON.stringify(decoded));
-    request.user = decoded;
-    console.log('verifyToken: who is user? ' + JSON.stringify(request.user));
+    req.user = decoded;
+    console.log('verifyToken: who is user? ' + JSON.stringify(req.user));
     next();
   } catch (error) {
     console.error('Token verification failed:', error);

@@ -1,4 +1,6 @@
 import 'dotenv/config.js';
+import { Upload } from '@aws-sdk/lib-storage';
+import fs from 'fs';
 
 import {
   S3Client,
@@ -6,64 +8,74 @@ import {
   GetObjectCommand,
 } from '@aws-sdk/client-s3';
 
-const s3Bucket = 'sycstorage';
-
 const s3Client = new S3Client({
-  region: process.env.AWS_REGION,
+  region: process.env.AWS_S3_REGION,
   credentials: {
-    accessKeyId: process.env.AWS_ACCESS_KEY,
-    secretAccessKey: process.env.AWS_SECRET_KEY,
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
   },
 });
 
 //#1 - Retrieve One
 //http://localhost:3000/images/12345
-const getImage = async (request, response) => {
-  console.log('inside getImage, request is : ' + JSON.stringify(request.body));
-  try {
-    const id = request.params.id;
-    const bucketParams = {
-      Bucket: s3Bucket,
-      Key: id,
-    };
+// const getImage = async (req, res) => {
+//   console.log('inside getImage, req is : ' + JSON.stringify(req.body));
+//   try {
+//     const id = req.params.id;
+//     const bucketParams = {
+//       Bucket: s3Bucket,
+//       Key: id,
+//     };
 
-    const data = await s3Client.send(new GetObjectCommand(bucketParams));
+//     const data = await s3Client.send(new GetObjectCommand(bucketParams));
 
-    const contentType = data.ContentType;
-    const srcString = await data.Body.transformToString('base64');
-    const imageSource = `data:${contentType};base64, ${srcString}`;
+//     const contentType = data.ContentType;
+//     const srcString = await data.Body.transformToString('base64');
+//     const imageSource = `data:${contentType};base64, ${srcString}`;
 
-    response.json(imageSource);
-  } catch (err) {
-    console.log(err);
-  }
-};
+//     res.json(imageSource);
+//   } catch (err) {
+//     console.log(err);
+//   }
+// };
 
 ///#2 - Create one
-const addImage = async (request, response) => {
-  console.log('inside addImage, request is : ' + JSON.stringify(request.body));
+const uploadImage = async (req, res) => {
+  console.log('what is path? ' + req.path);
+  console.log('what is req.body? ' + req.file);
+  if (!req.file) {
+    return res.status(400).send('No image file uploaded.');
+  }
+
+  const file = req.file;
+  const fileName = `${Date.now()}-${file.originalname}`;
+
   try {
-    console.log('inside addImage: what is request? ' + request.files);
-    const file = request.files[0];
+    const parallelUploads3 = new Upload({
+      client: s3Client,
+      params: {
+        Bucket: process.env.S3_BUCKET_NAME,
+        Key: fileName,
+        Body: file.buffer, // Use file.buffer for in-memory storage
+        ContentType: file.mimetype,
+        //ACL: 'public-read', // Make the uploaded image publicly accessible
+      },
+    });
 
-    console.log('what is file? ' + file);
-    const bucketParams = {
-      Bucket: s3Bucket,
-      Key: file.originalname,
-      Body: file.buffer,
-    };
+    parallelUploads3.on('httpUploadProgress', (progress) => {
+      console.log(progress);
+    });
 
-    console.log('what is bucketParams? ' + JSON.stringify(bucketParams));
-
-    const data = await s3Client.send(new PutObjectCommand(bucketParams));
-
-    console.log('what is data? ' + JSON.stringify(data));
-
-    response.json(data);
-  } catch (err) {
-    console.log(err);
+    const data = await parallelUploads3.done();
+    res.status(200).json({
+      message: 'Image uploaded successfully!',
+      location: data.Location,
+    });
+  } catch (error) {
+    console.error('Error uploading image to S3:', error);
+    res.status(500).send('Error uploading image.');
   }
 };
 
-export { getImage, addImage };
+export { uploadImage };
 //export { getImage };
