@@ -18,26 +18,31 @@ const s3Client = new S3Client({
 
 //#1 - Retrieve One
 //http://localhost:3000/images/12345
-// const getImage = async (req, res) => {
-//   console.log('inside getImage, req is : ' + JSON.stringify(req.body));
-//   try {
-//     const id = req.params.id;
-//     const bucketParams = {
-//       Bucket: s3Bucket,
-//       Key: id,
-//     };
+const getImage = async (req, res) => {
+  console.log('inside getImage');
+  const { imageKey } = req.params; // Get the image key from the URL parameter
+  const bucketName = 'sycstorage'; // Replace with your S3 bucket name
 
-//     const data = await s3Client.send(new GetObjectCommand(bucketParams));
+  try {
+    const data = await s3Client.send(
+      new GetObjectCommand({
+        Bucket: bucketName,
+        Key: '1752185076304-RandomDatePic_0001.jpeg',
+      })
+    );
 
-//     const contentType = data.ContentType;
-//     const srcString = await data.Body.transformToString('base64');
-//     const imageSource = `data:${contentType};base64, ${srcString}`;
+    // Set the Content-Type header based on the image's MIME type
+    if (data.ContentType) {
+      res.setHeader('Content-Type', data.ContentType);
+    }
 
-//     res.json(imageSource);
-//   } catch (err) {
-//     console.log(err);
-//   }
-// };
+    // Pipe the image stream directly to the response
+    data.Body.pipe(res);
+  } catch (err) {
+    console.error('Error retrieving image from S3:', err);
+    res.status(500).send('Error retrieving image from S3');
+  }
+};
 
 ///#2 - Create one
 const uploadImage = async (req, res) => {
@@ -77,5 +82,4 @@ const uploadImage = async (req, res) => {
   }
 };
 
-export { uploadImage };
-//export { getImage };
+export { uploadImage, getImage };
