@@ -8,6 +8,7 @@ import multer from 'multer'; // t receive multi-part form data
 const upload = multer();
 import closetitemRoutes from './routes/closetitemRoutes.js';
 import awsRoutes from './routes/awsRoutes.js';
+import imageRoutes from './routes/imageRoutes.js';
 import { errorHandler, notFound } from './middleware/errorMiddleware.js';
 
 const app = express();
@@ -27,6 +28,14 @@ app.use(cors({ origin: '*' }));
 app.use('/api/users', userRoutes);
 app.use('/api/closetitems', closetitemRoutes);
 app.use('/api/images', awsRoutes);
+app.use('/s3', imageRoutes);
+// Use the image routes
+app.use('/api/images', imageRoutes);
+
+// Basic route for testing
+app.get('/', (req, res) => {
+  res.send('Image Upload and Retrieval Service is running!');
+});
 
 // Middleware
 app.use(notFound);
