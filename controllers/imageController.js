@@ -3,8 +3,9 @@ import {
   generateDownloadPresignedUrl,
 } from '../utils/s3Utils.js';
 
-const getPresignedUrlForUpload = async (req, res) => {
+const generatePresignedUrlForUpload = async (req, res) => {
   console.log('what is req? ' + JSON.stringify(req.body));
+  console.log('what is req.path? ' + req.path);
   //const { filename, contentType } = req.body;
   const filename = req.body.filename;
   const contentType = req.body.contentType;
@@ -20,6 +21,7 @@ const getPresignedUrlForUpload = async (req, res) => {
       filename,
       contentType
     );
+    console.log('what is presignedUrl? ' + presignedUrl);
     res.json({ presignedUrl });
   } catch (error) {
     console.error('Error generating upload presigned URL:', error);
@@ -27,7 +29,7 @@ const getPresignedUrlForUpload = async (req, res) => {
   }
 };
 
-const getPresignedUrlForDownload = async (req, res) => {
+const generatePresignedUrlForDownload = async (req, res) => {
   const filename = req.params.filename;
 
   try {
@@ -39,4 +41,4 @@ const getPresignedUrlForDownload = async (req, res) => {
   }
 };
 
-export { getPresignedUrlForUpload, getPresignedUrlForDownload };
+export { generatePresignedUrlForUpload, generatePresignedUrlForDownload };
