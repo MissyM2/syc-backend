@@ -1,14 +1,20 @@
+import { v4 as uuidv4 } from 'uuid';
+import 'dotenv/config.js';
+
 import {
   generateUploadPresignedUrl,
   generateDownloadPresignedUrl,
 } from '../utils/s3Utils.js';
 
 const generatePresignedUrlForUpload = async (req, res) => {
-  console.log('what is req? ' + JSON.stringify(req.body));
   console.log('what is req.path? ' + req.path);
-  //const { filename, contentType } = req.body;
-  const filename = req.body.filename;
-  const contentType = req.body.contentType;
+
+  const { filename, contentType } = req.body;
+  console.log('waht is req.body? ' + JSON.stringify(req.body));
+  const key = `${uuidv4()}-${filename}`;
+  console.log('key ' + key);
+  const imageUrl = `https://${process.env.AWS_S3_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${key}`;
+  console.log('imageUrl? ' + imageUrl);
 
   if (!filename || !contentType) {
     return res
@@ -17,12 +23,11 @@ const generatePresignedUrlForUpload = async (req, res) => {
   }
 
   try {
-    const presignedUrl = await generateUploadPresignedUrl(
-      filename,
-      contentType
-    );
+    console.log('what is key? ' + key);
+    console.log('what is imageUrl? ' + imageUrl);
+    const presignedUrl = await generateUploadPresignedUrl(key, contentType);
     console.log('what is presignedUrl? ' + presignedUrl);
-    res.json({ presignedUrl });
+    res.json({ presignedUrl, imageUrl });
   } catch (error) {
     console.error('Error generating upload presigned URL:', error);
     res.status(500).json({ error: 'Failed to generate upload URL.' });

@@ -46,8 +46,17 @@ const getClosetitemsByUserId = async (req, res) => {
 
 ///#3 - Create one
 const addClosetitem = async (req, res) => {
-  const { category, itemName, seasons, size, desc, rating, imageId, userId } =
-    req.body;
+  const {
+    category,
+    itemName,
+    seasons,
+    size,
+    desc,
+    rating,
+    imageId,
+    imageUrl,
+    userId,
+  } = req.body;
   //console.log('createclosetitem:req.body ' + JSON.stringify(req.body));
 
   try {
@@ -67,11 +76,14 @@ const addClosetitem = async (req, res) => {
       desc: req.body.desc,
       rating: req.body.rating,
       imageId: req.body.imageId,
+      imageUrl: req.body.imageUrl,
       userId: req.body.userId,
     };
 
     const createdClosetitem = await Closetitem.create(closetitemData);
-    //console.log('what is createdClosetitem ' + createdClosetitem);
+    console.log(
+      'what is createdClosetitem ' + JSON.stringify(createdClosetitem)
+    );
     // If the creation was successful, you can return the created document or a success message
 
     if (createdClosetitem != null) {

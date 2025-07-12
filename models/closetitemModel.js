@@ -9,6 +9,7 @@ const closetitemSchema = new mongoose.Schema(
     desc: { type: String, required: false },
     rating: { type: String, required: false },
     imageId: { type: String, required: false },
+    imageUrl: { type: String, required: true },
     userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   },
   {
