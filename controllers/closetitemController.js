@@ -81,9 +81,7 @@ const addClosetitem = async (req, res) => {
     };
 
     const createdClosetitem = await Closetitem.create(closetitemData);
-    console.log(
-      'what is createdClosetitem ' + JSON.stringify(createdClosetitem)
-    );
+
     // If the creation was successful, you can return the created document or a success message
 
     if (createdClosetitem != null) {
