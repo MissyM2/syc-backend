@@ -1,6 +1,8 @@
 import Closetitem from '../models/closetitemModel.js';
 import User from '../models/userModel.js';
 
+import mongoose from 'mongoose';
+
 // #1 Retrieve All (for admin only) (add group by)
 const getAllClosetitems = async (req, res) => {
   try {
@@ -27,9 +29,26 @@ const getClosetitemsByUserId = async (req, res) => {
   }
 };
 
+const getOneClosetitem = async (req, res) => {
+  // req.user was set in authMiddleware.js
+  console.log(
+    'inside getOneClosetitem. what is req? ' + JSON.stringify(req.params.id)
+  );
+  const closetitem = await Closetitem.findById(req.params.id);
+
+  if (closetitem) {
+    res.json({
+      closetitem: closetitem._id,
+    });
+  } else {
+    res.status(404);
+    throw new Error('User not found');
+  }
+};
+
 //#2 - Retrieve One
 //http://localhost:3000/closetitems/12345
-// const getClosetitem = async (req, res) => {
+// const getOneClosetitem = async (req, res) => {
 //   const query = { _id: new ObjectId(req.params.id) };
 //   let db = database.getDb();
 
@@ -128,24 +147,30 @@ const addClosetitem = async (req, res) => {
 // };
 
 //#5 - Delete one
-// const deleteClosetitem = async (req, res) => {
-//   const query = { _id: new ObjectId(req.params.id) };
-//   let db = database.getDb();
+const deleteClosetitem = async (req, res) => {
+  console.log(
+    'inside deleteClosetitem. What is req? ' + JSON.stringify(req.params.id)
+  );
 
-//   try {
-//     const collection = db.collection('closetitems');
-//     let result = await collection.deleteOne(query);
-//     res.json(result);
-//   } catch (err) {
-//     res.status(500).json({ message: err.message });
-//   }
-// };
+  try {
+    const result = await Closetitem.deleteOne({
+      _id: new mongoose.Types.ObjectId(req.params.id),
+    });
+
+    //const collection = db.collection('closetitems');
+    //let result = await collection.deleteOne(query);
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
 
 export {
   getAllClosetitems,
+  getOneClosetitem,
   getClosetitemsByUserId,
   //getClosetitem,
   addClosetitem,
   //updateClosetitem,
-  //deleteClosetitem,
+  deleteClosetitem,
 };

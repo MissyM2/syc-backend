@@ -5,12 +5,17 @@ import {
   loginUser,
   getUserProfile,
   getAllUsers,
+  getOneUser,
+  deleteClosetitemIdFromUser,
 } from '../controllers/userController.js';
 
 const userRoutes = express.Router();
 
 // Get all users
 userRoutes.get('/allusers', getAllUsers);
+
+// Get one user by id
+userRoutes.get('/:id', getOneUser);
 
 // Create a new user
 userRoutes.post('/register', registerUser);
@@ -22,5 +27,8 @@ userRoutes.post('/login', loginUser);
 userRoutes.route('/profile').get(verifyToken, getUserProfile);
 
 // Add more routes for PUT, DELETE as needed
+
+// Update existing user, delete a itemId from the user's closetitems array
+userRoutes.route('/:userId/closetitems/:itemId', deleteClosetitemIdFromUser);
 
 export default userRoutes;

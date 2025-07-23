@@ -52,6 +52,28 @@ const loginUser = async (req, res) => {
   }
 };
 
+const getOneUser = async (req, res) => {
+  // req.user was set in authMiddleware.js
+  console.log(
+    'inside getOneUser. what is req? ' + JSON.stringify(req.params.id)
+  );
+  const user = await User.findById(req.params.id);
+
+  if (user) {
+    res.json({
+      id: user._id,
+      userName: user.userName,
+      email: user.email,
+      closetitems: user.closetitems,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
+    });
+  } else {
+    res.status(404);
+    throw new Error('User not found');
+  }
+};
+
 const getUserProfile = async (req, res) => {
   // req.user was set in authMiddleware.js
   const user = await User.findById(req.user._id);
@@ -84,4 +106,41 @@ const getAllUsers = async (req, res) => {
   }
 };
 
-export { registerUser, loginUser, getUserProfile, getAllUsers };
+const deleteClosetitemIdFromUser = async (req, res) => {
+  console.log(
+    'inside deleteClosetitemIdFromUser. what is req? ' +
+      JSON.stringify(req.body)
+  );
+  try {
+    const userId = req.params.userId;
+    const itemId = req.params.itemId;
+
+    // Use findOneAndUpdate with the $pull operator
+    const updatedUser = await User.findOneAndUpdate(
+      { _id: userId },
+      { $pull: { closetitems: { _id: itemId } } }, // Remove the item by its ID
+      { new: true } // Return the updated document
+    );
+
+    if (!updatedUser) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    res.status(200).json({
+      message: 'Clostitem deleted successfully from user',
+      user: updatedUser,
+    });
+  } catch (error) {
+    console.error('Error deleting item:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+export {
+  registerUser,
+  loginUser,
+  getUserProfile,
+  getAllUsers,
+  getOneUser,
+  deleteClosetitemIdFromUser,
+};

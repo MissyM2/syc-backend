@@ -2,11 +2,12 @@ import express from 'express';
 import { verifyToken } from '../middleware/authMiddleware.js';
 import {
   getAllClosetitems,
+  getOneClosetitem,
   getClosetitemsByUserId,
   // getClosetitem,
   addClosetitem,
   // updateClosetitem,
-  // deleteClosetitem,
+  deleteClosetitem,
 } from '../controllers/closetitemController.js';
 
 const closetitemRoutes = express.Router();
@@ -20,6 +21,9 @@ closetitemRoutes.route('/user/:userId/closetitems').get(getClosetitemsByUserId);
 // Get closetitem
 //closetitemRoutes.route('/closetitem').get(verifyToken, getClosetitem);
 
+// Get one closetitem by id
+closetitemRoutes.get('/:id', getOneClosetitem);
+
 // Create a closetitem
 closetitemRoutes.route('/addclosetitem').post(addClosetitem);
 
@@ -30,5 +34,6 @@ closetitemRoutes.route('/addclosetitem').post(addClosetitem);
 //closetitemRoutes.route('/delete-closetitem').delete(verifyToken, deleteClosetitem);
 
 // Add more routes for PUT, DELETE as needed
+closetitemRoutes.route('/:id').delete(deleteClosetitem);
 
 export default closetitemRoutes;
