@@ -1,5 +1,6 @@
 import User from '../models/userModel.js';
 import generateToken from '../utils/generateToken.js';
+import mongoose from 'mongoose';
 
 const registerUser = async (req, res) => {
   console.log('registerUser');
@@ -106,30 +107,37 @@ const getAllUsers = async (req, res) => {
   }
 };
 
-const deleteClosetitemIdFromUser = async (req, res) => {
+const removeReferenceToDeletedClosetitem = async (req, res) => {
   console.log(
-    'inside deleteClosetitemIdFromUser. what is req? ' +
-      JSON.stringify(req.body)
+    'inside removeReferenceToDeletedClosetitem. what is req? ' +
+      JSON.stringify(req.params)
   );
+
   try {
+    console.log('inside try');
     const userId = req.params.userId;
     const itemId = req.params.itemId;
 
-    // Use findOneAndUpdate with the $pull operator
-    const updatedUser = await User.findOneAndUpdate(
-      { _id: userId },
-      { $pull: { closetitems: { _id: itemId } } }, // Remove the item by its ID
-      { new: true } // Return the updated document
+    console.log(
+      'userid and itemid: ' + 'userId: ' + userId + ' itemId: ' + itemId
     );
 
-    if (!updatedUser) {
-      return res.status(404).json({ message: 'User not found' });
-    }
+    // Find the user by ID and populate with the array
+    const user = await User.findById(userId).populate('closetitems');
+    console.log('inside try: user ' + user._id);
 
-    res.status(200).json({
-      message: 'Clostitem deleted successfully from user',
-      user: updatedUser,
-    });
+    if (user) {
+      const item = await user.closetitems.find(
+        (item) => item._id.toString() === itemId
+      );
+      if (item) {
+        res.json(item);
+      } else {
+        res.status(404).send('Item not found for this user');
+      }
+    } else {
+      res.status(404).send('User not found');
+    }
   } catch (error) {
     console.error('Error deleting item:', error);
     res.status(500).json({ message: 'Server error' });
@@ -142,5 +150,5 @@ export {
   getUserProfile,
   getAllUsers,
   getOneUser,
-  deleteClosetitemIdFromUser,
+  removeReferenceToDeletedClosetitem,
 };

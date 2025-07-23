@@ -6,7 +6,7 @@ import {
   getUserProfile,
   getAllUsers,
   getOneUser,
-  deleteClosetitemIdFromUser,
+  removeReferenceToDeletedClosetitem,
 } from '../controllers/userController.js';
 
 const userRoutes = express.Router();
@@ -29,6 +29,11 @@ userRoutes.route('/profile').get(verifyToken, getUserProfile);
 // Add more routes for PUT, DELETE as needed
 
 // Update existing user, delete a itemId from the user's closetitems array
-userRoutes.route('/:userId/closetitems/:itemId', deleteClosetitemIdFromUser);
+//userRoutes.route('/:userId/closetitems/:itemId', deleteClosetitemIdFromUser);
+
+// update a closetitem.  Remove one of the references to a closetitem id
+userRoutes
+  .route('/:userId/closetitems/:itemId')
+  .get(removeReferenceToDeletedClosetitem);
 
 export default userRoutes;
