@@ -154,7 +154,7 @@ const deleteClosetitem = async (req, res) => {
 
   try {
     const result = await Closetitem.deleteOne({
-      _id: new mongoose.Types.ObjectId(req.params.id),
+      _id: req.params.id,
     });
 
     //const collection = db.collection('closetitems');

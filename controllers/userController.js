@@ -39,12 +39,17 @@ const loginUser = async (req, res) => {
   //check if user email exists in db
   const user = await User.findOne({ email });
 
+  console.log('be: user? ' + JSON.stringify(user));
+
   // return user obj if their password matches
   if (user && (await user.matchPassword(password))) {
     res.json({
-      _id: user._id,
-      userName: user.userName,
-      email: user.email,
+      loggedInUserInfo: {
+        _id: user._id,
+        userName: user.userName,
+        email: user.email,
+        closetitems: user.closetitems,
+      },
       userToken: generateToken(user._id),
     });
   } else {
@@ -94,49 +99,48 @@ const getUserProfile = async (req, res) => {
   }
 };
 
-const getAllUsers = async (req, res) => {
-  try {
-    const users = await User.find().populate(
-      'closetitems',
-      'category itemName seasons size, desc, rating, imageId'
-    );
-    console.log('users are: ' + JSON.stringify(users));
-    res.json(users);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-};
+// const getAllUsers = async (req, res) => {
+//   try {
+//     const user = await User.find().populate(
+//       'closetitems',
+//       'category itemName seasons size, desc, rating, imageId'
+//     );
+//     console.log('users are: ' + JSON.stringify(users));
+//     res.json(users);
+//   } catch (err) {
+//     res.status(500).json({ message: err.message });
+//   }
+// };
 
 const removeReferenceToDeletedClosetitem = async (req, res) => {
-  console.log(
-    'inside removeReferenceToDeletedClosetitem. what is req? ' +
-      JSON.stringify(req.params)
-  );
-
+  console.log('removeReferenceToDeletedClosetitem');
   try {
-    console.log('inside try');
+    console.log('inside try of removeReferenceToDeletedClosetitem ');
     const userId = req.params.userId;
-    const itemId = req.params.itemId;
-
-    console.log(
-      'userid and itemid: ' + 'userId: ' + userId + ' itemId: ' + itemId
-    );
+    const closetitemId = req.params.closetitemId;
 
     // Find the user by ID and populate with the array
     const user = await User.findById(userId).populate('closetitems');
-    console.log('inside try: user ' + user._id);
 
-    if (user) {
-      const item = await user.closetitems.find(
-        (item) => item._id.toString() === itemId
-      );
-      if (item) {
-        res.json(item);
-      } else {
-        res.status(404).send('Item not found for this user');
-      }
+    // console.log('what is user? ' + user);
+    console.log('what is closetitemId? ' + closetitemId);
+
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    // Use $pull with a filter to remove the specific friend
+    const result = await User.updateOne(
+      { _id: userId },
+      { $pull: { closetitems: closetitemId } }
+    );
+
+    if (result.modifiedCount === 0) {
+      res.status(404).send("Item not found for this user's closetitem list");
+      console.log("Closetitem not found in user's closetitem list");
     } else {
-      res.status(404).send('User not found');
+      console.log('Closetitem removed successfully!');
+      res.json(user);
     }
   } catch (error) {
     console.error('Error deleting item:', error);
@@ -148,7 +152,7 @@ export {
   registerUser,
   loginUser,
   getUserProfile,
-  getAllUsers,
+  //getAllUsers,
   getOneUser,
   removeReferenceToDeletedClosetitem,
 };
