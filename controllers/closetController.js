@@ -17,7 +17,7 @@ const getAllClosetitems = async (req, res) => {
 };
 
 // #1 Retrieve All (for admin only) (add group by)
-const getClosetitemsByUserId = async (req, res) => {
+const fetchClosetitems = async (req, res) => {
   try {
     const userId = req.params.userId;
     const closetitems = await Closetitem.find({ userId: userId });
@@ -168,7 +168,7 @@ const deleteClosetitem = async (req, res) => {
 export {
   getAllClosetitems,
   getOneClosetitem,
-  getClosetitemsByUserId,
+  fetchClosetitems,
   //getClosetitem,
   addClosetitem,
   //updateClosetitem,

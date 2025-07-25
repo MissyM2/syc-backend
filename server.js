@@ -6,7 +6,7 @@ import cors from 'cors';
 import userRoutes from './routes/userRoutes.js';
 import multer from 'multer'; // t receive multi-part form data
 const upload = multer();
-import closetitemRoutes from './routes/closetitemRoutes.js';
+import closetRoutes from './routes/closetRoutes.js';
 import { errorHandler, notFound } from './middleware/errorMiddleware.js';
 
 const app = express();
@@ -24,7 +24,7 @@ app.use(cors({ origin: '*' }));
 
 // API routes
 app.use('/api/users', userRoutes);
-app.use('/api/closetitems', closetitemRoutes);
+app.use('/api/closet', closetRoutes);
 
 // Basic route for testing
 app.get('/', (req, res) => {
