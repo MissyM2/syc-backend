@@ -7,6 +7,7 @@ import {
   //getAllUsers,
   getOneUser,
   removeReferenceToDeletedClosetitem,
+  addReferenceToNewClosetitem,
 } from '../controllers/userController.js';
 
 const userRoutes = express.Router();
@@ -22,6 +23,11 @@ userRoutes.post('/register', registerUser);
 
 // login user
 userRoutes.post('/login', loginUser);
+
+// update a user with additional closetitem
+userRoutes
+  .route('/:userId/closetitems/:closetitemId')
+  .put(addReferenceToNewClosetitem);
 
 // get one user's profile
 //userRoutes.route('/profile').get(verifyToken, getUserProfile);

@@ -31,9 +31,9 @@ const fetchClosetitems = async (req, res) => {
 
 const getOneClosetitem = async (req, res) => {
   // req.user was set in authMiddleware.js
-  console.log(
-    'inside getOneClosetitem. what is req? ' + JSON.stringify(req.params.id)
-  );
+  // console.log(
+  //   'inside getOneClosetitem. what is req? ' + JSON.stringify(req.params.id)
+  // );
   const closetitem = await Closetitem.findById(req.params.id);
 
   if (closetitem) {
@@ -148,9 +148,9 @@ const addClosetitem = async (req, res) => {
 
 //#5 - Delete one
 const deleteClosetitem = async (req, res) => {
-  console.log(
-    'inside deleteClosetitem. What is req? ' + JSON.stringify(req.params.id)
-  );
+  // console.log(
+  //   'inside deleteClosetitem. What is req? ' + JSON.stringify(req.params.id)
+  // );
 
   try {
     const result = await Closetitem.deleteOne({
