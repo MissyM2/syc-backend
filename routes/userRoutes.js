@@ -1,10 +1,10 @@
 import express from 'express';
-import { verifyToken } from '../middleware/authMiddleware.js';
+import { protect, authorizeRoles } from '../middleware/authMiddleware.ts';
 import {
   registerUser,
   loginUser,
   getUserProfile,
-  //getAllUsers,
+  getAllUsers,
   getOneUser,
   removeReferenceToDeletedClosetitem,
   addReferenceToNewClosetitem,
@@ -13,16 +13,16 @@ import {
 const userRoutes = express.Router();
 
 // Get all users
-//userRoutes.get('/allusers', getAllUsers);
+userRoutes.route('/allusers').get(protect, authorizeRoles('user'), getAllUsers);
 
 // Get one user by id
 userRoutes.get('/:id', getOneUser);
 
 // Create a new user
-userRoutes.post('/register', registerUser);
+userRoutes.route('/register').post(registerUser);
 
 // login user
-userRoutes.post('/login', loginUser);
+userRoutes.route('/login').post(loginUser);
 
 // update a user with additional closetitem
 userRoutes

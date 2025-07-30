@@ -1,5 +1,5 @@
 import express from 'express';
-import { verifyToken } from '../middleware/authMiddleware.js';
+import { protect, authorizeRoles } from '../middleware/authMiddleware.ts';
 import {
   getAllClosetitems,
   getOneClosetitem,
@@ -22,7 +22,7 @@ closetRoutes.route('/user/:userId/closetitems').get(fetchClosetitems);
 //closetRoutes.route('/closetitem').get(verifyToken, getClosetitem);
 
 // Get one closetitem by id
-closetRoutes.get('/:id', getOneClosetitem);
+closetRoutes.route('/:id').get(getOneClosetitem);
 
 // Create a closetitem
 closetRoutes.route('/addclosetitem').post(addClosetitem);
@@ -30,7 +30,7 @@ closetRoutes.route('/addclosetitem').post(addClosetitem);
 // Update a closetitem
 //closetRoutes.route('/update-closetitem').put(verifyToken, updateClosetitem);
 
-// delete a closetitem
+// delete a closetite
 //closetRoutes.route('/delete-closetitem').delete(verifyToken, deleteClosetitem);
 
 // Add more routes for PUT, DELETE as needed

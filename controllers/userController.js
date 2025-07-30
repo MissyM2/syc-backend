@@ -1,5 +1,5 @@
 import User from '../models/userModel.js';
-import generateToken from '../utils/generateToken.js';
+import generateToken from '../utils/generateToken.ts';
 import mongoose from 'mongoose';
 
 // CREATE A NEW USER
@@ -38,9 +38,10 @@ const loginUser = async (req, res) => {
   // return user obj if their password matches
   if (user && (await user.matchPassword(password))) {
     res.json({
-      userInfo: {
+      currentUser: {
         _id: user._id,
         userName: user.userName,
+        role: user.role,
         email: user.email,
         closetitems: user.closetitems,
       },
@@ -90,18 +91,18 @@ const getUserProfile = async (req, res) => {
   }
 };
 
-// const getAllUsers = async (req, res) => {
-//   try {
-//     const user = await User.find().populate(
-//       'closetitems',
-//       'category itemName seasons size, desc, rating, imageId'
-//     );
-//     console.log('users are: ' + JSON.stringify(users));
-//     res.json(users);
-//   } catch (err) {
-//     res.status(500).json({ message: err.message });
-//   }
-// };
+const getAllUsers = async (req, res) => {
+  try {
+    const users = await User.find().populate(
+      'closetitems',
+      'category itemName seasons size, desc, rating, imageId'
+    );
+    console.log('users are: ' + JSON.stringify(users));
+    res.json(users);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
 
 // DELETE CLOSETITEM FROM CLOSETITEMS ARRAY IN USER
 const removeReferenceToDeletedClosetitem = async (req, res) => {
@@ -159,7 +160,7 @@ export {
   registerUser,
   loginUser,
   getUserProfile,
-  //getAllUsers,
+  getAllUsers,
   getOneUser,
   removeReferenceToDeletedClosetitem,
   addReferenceToNewClosetitem,
