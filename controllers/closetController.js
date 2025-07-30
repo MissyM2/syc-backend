@@ -5,6 +5,7 @@ import mongoose from 'mongoose';
 
 // #1 Retrieve All (for admin only) (add group by)
 const getAllClosetitems = async (req, res) => {
+  console.log('inside getAllClosetitems');
   try {
     const closetitems = await Closetitem.find().populate(
       'userId',
@@ -18,6 +19,7 @@ const getAllClosetitems = async (req, res) => {
 
 // #1 Retrieve All (for admin only) (add group by)
 const fetchClosetitems = async (req, res) => {
+  console.log('inside fetchClosetitems');
   try {
     const userId = req.params.userId;
     const closetitems = await Closetitem.find({ userId: userId });
@@ -30,6 +32,7 @@ const fetchClosetitems = async (req, res) => {
 };
 
 const getOneClosetitem = async (req, res) => {
+  console.log('inside getOneClosetitem');
   // req.user was set in authMiddleware.js
   // console.log(
   //   'inside getOneClosetitem. what is req? ' + JSON.stringify(req.params.id)
@@ -77,6 +80,7 @@ const addClosetitem = async (req, res) => {
     userId,
   } = req.body;
   //console.log('createclosetitem:req.body ' + JSON.stringify(req.body));
+  console.log('inside addClosetitem');
 
   try {
     const closetitemExists = await Closetitem.findOne({ itemName });
@@ -100,8 +104,6 @@ const addClosetitem = async (req, res) => {
     };
 
     const createdClosetitem = await Closetitem.create(closetitemData);
-
-    // If the creation was successful, you can return the created document or a success message
 
     if (createdClosetitem != null) {
       const itemId = createdClosetitem._id;
@@ -148,17 +150,12 @@ const addClosetitem = async (req, res) => {
 
 //#5 - Delete one
 const deleteClosetitem = async (req, res) => {
-  // console.log(
-  //   'inside deleteClosetitem. What is req? ' + JSON.stringify(req.params.id)
-  // );
+  console.log('inside deleteClosetitems');
 
   try {
     const result = await Closetitem.deleteOne({
       _id: req.params.id,
     });
-
-    //const collection = db.collection('closetitems');
-    //let result = await collection.deleteOne(query);
     res.json(result);
   } catch (err) {
     res.status(500).json({ message: err.message });

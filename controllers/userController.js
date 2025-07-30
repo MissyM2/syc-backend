@@ -4,23 +4,17 @@ import mongoose from 'mongoose';
 
 // CREATE A NEW USER
 const registerUser = async (req, res) => {
-  // console.log('registerUser');
-  // console.log('req 1 ' + JSON.stringify(req.body));
   const { userName, email, password, closetitems } = req.body;
 
   // check if email exists in db
   const userExists = await User.findOne({ email });
-  //console.log('userExists ' + userExists);
 
   if (userExists) {
     res.status(404);
     throw new Error('User already exists');
   }
 
-  // console.log('req ' + JSON.stringify(req.body));
-
   const user = await User.create({ userName, email, password, closetitems });
-  // console.log('user ' + JSON.stringify(user));
 
   if (user) {
     res.status(201).json({
@@ -36,18 +30,15 @@ const registerUser = async (req, res) => {
 
 // FIND AND RETURN AN EXISTING USER
 const loginUser = async (req, res) => {
-  // console.log('BE:userController, inside loginUser');
   const { email, password } = req.body;
 
   //check if user email exists in db
   const user = await User.findOne({ email });
 
-  // console.log('be: user? ' + JSON.stringify(user));
-
   // return user obj if their password matches
   if (user && (await user.matchPassword(password))) {
     res.json({
-      loggedInUserInfo: {
+      userInfo: {
         _id: user._id,
         userName: user.userName,
         email: user.email,
@@ -62,11 +53,6 @@ const loginUser = async (req, res) => {
 };
 
 const getOneUser = async (req, res) => {
-  // req.user was set in authMiddleware.js
-  // console.log(
-  //   'BE:getOneUser, inside getOneUser. what is req? ' +
-  //     JSON.stringify(req.params.id)
-  // );
   const user = await User.findById(req.params.id);
 
   if (user) {
@@ -86,7 +72,6 @@ const getOneUser = async (req, res) => {
 
 // GET USER PROFILE
 const getUserProfile = async (req, res) => {
-  //console.log('BE:userController, inside getUserProfile');
   // req.user was set in authMiddleware.js
   const user = await User.findById(req.user._id);
 
@@ -120,23 +105,17 @@ const getUserProfile = async (req, res) => {
 
 // DELETE CLOSETITEM FROM CLOSETITEMS ARRAY IN USER
 const removeReferenceToDeletedClosetitem = async (req, res) => {
-  //console.log('BE:userController,removeReferenceToDeletedClosetitem');
   try {
-    //console.log('inside try of removeReferenceToDeletedClosetitem ');
     const userId = req.params.userId;
     const closetitemId = req.params.closetitemId;
 
     // Find the user by ID and populate with the array
     const user = await User.findById(userId).populate('closetitems');
 
-    // console.log('what is user? ' + user);
-    //console.log('what is closetitemId? ' + closetitemId);
-
     if (!user) {
       throw new Error('User not found');
     }
 
-    // Use $pull with a filter to remove the specific friend
     const result = await User.updateOne(
       { _id: userId },
       { $pull: { closetitems: closetitemId } }
@@ -144,9 +123,7 @@ const removeReferenceToDeletedClosetitem = async (req, res) => {
 
     if (result.modifiedCount === 0) {
       res.status(404).send("Item not found for this user's closetitem list");
-      //console.log("Closetitem not found in user's closetitem list");
     } else {
-      //console.log('Closetitem removed successfully!');
       res.json(user);
     }
   } catch (error) {
@@ -157,13 +134,9 @@ const removeReferenceToDeletedClosetitem = async (req, res) => {
 
 // ADD CLOSETITEM TO CLOSETITEMS ARRAY IN USER
 const addReferenceToNewClosetitem = async (req, res) => {
-  //console.log('BE:userController,addReferenceToNewClosetitem');
   try {
-    //console.log('inside try of addReferenceToNewClosetitem');
     const userId = req.params.userId;
-    //console.log('userId  ' + req.params.userId);
     const closetitemId = req.params.closetitemId;
-    //console.log('closetitemId  ' + req.params.closetitemId);
 
     // Find the user by ID and populate with the array
     const user = await User.findByIdAndUpdate(
