@@ -4,7 +4,7 @@ import mongoose from 'mongoose';
 
 // CREATE A NEW USER
 const registerUser = async (req, res) => {
-  const { userName, email, password, closetitems } = req.body;
+  const { userName, email, password, userRole, closetitems } = req.body;
 
   // check if email exists in db
   const userExists = await User.findOne({ email });
@@ -14,12 +14,19 @@ const registerUser = async (req, res) => {
     throw new Error('User already exists');
   }
 
-  const user = await User.create({ userName, email, password, closetitems });
+  const user = await User.create({
+    userName,
+    email,
+    password,
+    userRole,
+    closetitems,
+  });
 
   if (user) {
     res.status(201).json({
       userName: user.userName,
       email: user.email,
+      userRole: user.userRole,
       closetitems: user.closetitems,
     });
   } else {
@@ -32,20 +39,23 @@ const registerUser = async (req, res) => {
 const loginUser = async (req, res) => {
   const { email, password } = req.body;
 
-  //check if user email exists in db
   const user = await User.findOne({ email });
 
-  // return user obj if their password matches
   if (user && (await user.matchPassword(password))) {
     res.json({
       currentUser: {
         _id: user._id,
         userName: user.userName,
-        role: user.role,
         email: user.email,
+        userRole: user.userRole,
         closetitems: user.closetitems,
       },
-      userToken: generateToken(user._id),
+      userToken: generateToken(
+        user._id,
+        user.email,
+        user.userName,
+        user.userRole
+      ),
     });
   } else {
     res.status(401);
@@ -61,6 +71,7 @@ const getOneUser = async (req, res) => {
       id: user._id,
       userName: user.userName,
       email: user.email,
+      userRole: user.userRole,
       closetitems: user.closetitems,
       createdAt: user.createdAt,
       updatedAt: user.updatedAt,
@@ -81,6 +92,7 @@ const getUserProfile = async (req, res) => {
       id: user._id,
       userName: user.userName,
       email: user.email,
+      userRole: user.userRole,
       closetitems: user.closetitems,
       createdAt: user.createdAt,
       updatedAt: user.updatedAt,
@@ -93,11 +105,7 @@ const getUserProfile = async (req, res) => {
 
 const getAllUsers = async (req, res) => {
   try {
-    const users = await User.find().populate(
-      'closetitems',
-      'category itemName seasons size, desc, rating, imageId'
-    );
-    console.log('users are: ' + JSON.stringify(users));
+    const users = await User.find().populate('closetitems');
     res.json(users);
   } catch (err) {
     res.status(500).json({ message: err.message });

@@ -1,6 +1,6 @@
 import bcrypt from 'bcryptjs';
 import mongoose from 'mongoose';
-import Closetitem from '../models/closetitemModel.js';
+//import Closetitem from '../models/closetitemModel.js';
 
 const userSchema = new mongoose.Schema(
   {
@@ -8,7 +8,7 @@ const userSchema = new mongoose.Schema(
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     closetitems: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Closetitem' }],
-    role: { type: String, enum: ['user', 'admin'], default: 'user' },
+    userRole: { type: String, enum: ['user', 'admin'], default: 'user' },
   },
   {
     timestamps: true,

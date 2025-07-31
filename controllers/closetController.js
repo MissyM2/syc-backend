@@ -19,7 +19,6 @@ const getAllClosetitems = async (req, res) => {
 
 // #1 Retrieve All (for admin only) (add group by)
 const fetchClosetitems = async (req, res) => {
-  console.log('inside fetchClosetitems');
   try {
     const userId = req.params.userId;
     const closetitems = await Closetitem.find({ userId: userId });
@@ -79,8 +78,6 @@ const addClosetitem = async (req, res) => {
     imageUrl,
     userId,
   } = req.body;
-  //console.log('createclosetitem:req.body ' + JSON.stringify(req.body));
-  console.log('inside addClosetitem');
 
   try {
     const closetitemExists = await Closetitem.findOne({ itemName });
