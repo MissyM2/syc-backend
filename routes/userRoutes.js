@@ -13,7 +13,9 @@ import {
 const userRoutes = express.Router();
 
 // Get all users
-userRoutes.route('/allusers').get(protect, authorizeRoles('user'), getAllUsers);
+userRoutes
+  .route('/allusers')
+  .get(protect, authorizeRoles('admin'), getAllUsers);
 
 // Get one user by id
 userRoutes.get('/:id', getOneUser);
