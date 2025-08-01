@@ -17,7 +17,6 @@ export const protect = (
     req.headers.authorization &&
     req.headers.authorization.startsWith('Bearer')
   ) {
-    console.log('28:authMiddleware, protect: we have req.headers');
     try {
       token = req.headers.authorization.split(' ')[1];
 
