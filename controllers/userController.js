@@ -4,34 +4,76 @@ import mongoose from 'mongoose';
 
 // CREATE A NEW USER
 const registerUser = async (req, res) => {
-  const { userName, email, password, userRole, closetitems } = req.body;
-
-  // check if email exists in db
-  const userExists = await User.findOne({ email });
-
-  if (userExists) {
-    res.status(404);
-    throw new Error('User already exists');
-  }
-
-  const user = await User.create({
+  const {
     userName,
     email,
     password,
     userRole,
+    imageId,
+    imageUrl,
     closetitems,
-  });
+  } = req.body;
 
-  if (user) {
-    res.status(201).json({
-      userName: user.userName,
-      email: user.email,
-      userRole: user.userRole,
-      closetitems: user.closetitems,
+  try {
+    // check if email exists in db
+    const userExists = await User.findOne({ email });
+
+    if (userExists) {
+      res.status(404);
+      throw new Error('User already exists');
+    }
+
+    const newUserData = {
+      userName: req.body.userName,
+      email: req.body.email,
+      password: req.body.password,
+      userRole: req.body.userRole,
+      imageId: req.body.imageId,
+      imageUrl: req.body.imageUrl,
+      closetitems: req.body.closetitems,
+    };
+
+    const createdUser = await User.create(newUserData);
+
+    if (createdUser) {
+      res.status(201).json({
+        userName: createdUser.userName,
+        email: createdUser.email,
+        userRole: createdUser.userRole,
+        closetitems: createdUser.closetitems,
+      });
+    } else {
+      res.status(400);
+      throw new Error('Invalid user data');
+    }
+  } catch (error) {
+    res.status(500);
+    throw new Error({ message: error.message });
+  }
+};
+
+const updateUserWithProfileImageDetails = async (req, res) => {
+  const userId = req.params.userId;
+  const { imageId, imageUrl } = req.body;
+
+  try {
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { imageId, imageUrl },
+      { new: true }
+    );
+
+    if (!updatedUser) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    res.json({
+      imageId: updatedUser.imageId,
+      imageUrl: updatedUser.imageUrl,
     });
-  } else {
-    res.status(400);
-    throw new Error('Invalid user data');
+  } catch (error) {
+    console.error('Error updating user:', error);
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -166,6 +208,7 @@ const addReferenceToNewClosetitem = async (req, res) => {
 
 export {
   registerUser,
+  updateUserWithProfileImageDetails,
   loginUser,
   getUserProfile,
   getAllUsers,

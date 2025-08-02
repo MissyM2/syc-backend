@@ -2,11 +2,28 @@ import bcrypt from 'bcryptjs';
 import mongoose from 'mongoose';
 //import Closetitem from '../models/closetitemModel.js';
 
+const homeAddressSchema = new mongoose.Schema(
+  {
+    street1: { type: String, required: true },
+    street2: { type: String },
+    city: { type: String, required: true },
+    state: { type: String, required: true },
+    zipCode: { type: String, required: true },
+    country: { type: String, required: true },
+  },
+  {
+    _id: false,
+  }
+);
+
 const userSchema = new mongoose.Schema(
   {
     userName: { type: String, required: true },
     email: { type: String, required: true, unique: true },
+    homeAddress: homeAddressSchema,
     password: { type: String, required: true },
+    profileImageId: { type: String, required: false },
+    profileImageUrl: { type: String, required: true },
     closetitems: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Closetitem' }],
     userRole: { type: String, enum: ['user', 'admin'], default: 'user' },
   },

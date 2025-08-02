@@ -10,6 +10,11 @@ const closetitemSchema = new mongoose.Schema(
     rating: { type: String, required: false },
     imageId: { type: String, required: false },
     imageUrl: { type: String, required: true },
+    closetType: {
+      type: String,
+      enum: ['personal', 'personalOnly', 'donation', 'sharing'],
+      default: 'personal',
+    },
     userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   },
   {

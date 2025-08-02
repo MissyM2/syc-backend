@@ -2,8 +2,9 @@ import express from 'express';
 import { protect, authorizeRoles } from '../middleware/authMiddleware.ts';
 import {
   registerUser,
+  updateUserWithProfileImageDetails,
   loginUser,
-  getUserProfile,
+  //getUserProfile,
   getAllUsers,
   getOneUser,
   removeReferenceToDeletedClosetitem,
@@ -23,7 +24,10 @@ userRoutes.get('/:id', getOneUser);
 // Create a new user
 userRoutes.route('/register').post(registerUser);
 
-// login user
+// update a user with additional closetitem
+userRoutes.route('/:userId/').put(updateUserWithProfileImageDetails);
+
+// update user with profile image details
 userRoutes.route('/login').post(loginUser);
 
 // update a user with additional closetitem
