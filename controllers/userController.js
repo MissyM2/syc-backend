@@ -7,73 +7,46 @@ const registerUser = async (req, res) => {
   const {
     userName,
     email,
+    homeAddress,
     password,
+    profileImageId,
+    profileImageUrl,
     userRole,
-    imageId,
-    imageUrl,
     closetitems,
   } = req.body;
 
-  try {
-    // check if email exists in db
-    const userExists = await User.findOne({ email });
+  // check if email exists in db
+  const userExists = await User.findOne({ email });
 
-    if (userExists) {
-      res.status(404);
-      throw new Error('User already exists');
-    }
-
-    const newUserData = {
-      userName: req.body.userName,
-      email: req.body.email,
-      password: req.body.password,
-      userRole: req.body.userRole,
-      imageId: req.body.imageId,
-      imageUrl: req.body.imageUrl,
-      closetitems: req.body.closetitems,
-    };
-
-    const createdUser = await User.create(newUserData);
-
-    if (createdUser) {
-      res.status(201).json({
-        userName: createdUser.userName,
-        email: createdUser.email,
-        userRole: createdUser.userRole,
-        closetitems: createdUser.closetitems,
-      });
-    } else {
-      res.status(400);
-      throw new Error('Invalid user data');
-    }
-  } catch (error) {
-    res.status(500);
-    throw new Error({ message: error.message });
+  if (userExists) {
+    res.status(404);
+    throw new Error('User already exists');
   }
-};
 
-const updateUserWithProfileImageDetails = async (req, res) => {
-  const userId = req.params.userId;
-  const { imageId, imageUrl } = req.body;
+  const user = await User.create({
+    userName,
+    email,
+    homeAddress: req.body.homeAddress || {},
+    password,
+    profileImageId,
+    profileImageUrl,
+    userRole,
+    closetitems,
+  });
 
-  try {
-    const updatedUser = await User.findByIdAndUpdate(
-      userId,
-      { imageId, imageUrl },
-      { new: true }
-    );
-
-    if (!updatedUser) {
-      return res.status(404).json({ message: 'User not found' });
-    }
-
-    res.json({
-      imageId: updatedUser.imageId,
-      imageUrl: updatedUser.imageUrl,
+  if (user) {
+    res.status(201).json({
+      userName: user.userName,
+      email: user.email,
+      homeAddress: user.homeAddress,
+      profileImageId: user.profileImageId,
+      profileImageUrl: user.profileImageUrl,
+      userRole: user.userRole,
+      closetitems: user.closetitems,
     });
-  } catch (error) {
-    console.error('Error updating user:', error);
-    res.status(500).json({ message: 'Server error' });
+  } else {
+    res.status(400);
+    throw new Error('Invalid user data');
   }
 };
 
@@ -208,7 +181,6 @@ const addReferenceToNewClosetitem = async (req, res) => {
 
 export {
   registerUser,
-  updateUserWithProfileImageDetails,
   loginUser,
   getUserProfile,
   getAllUsers,
