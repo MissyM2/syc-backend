@@ -1,6 +1,7 @@
 import User from '../models/userModel.js';
 import generateToken from '../utils/generateToken.ts';
 import mongoose from 'mongoose';
+import { Types } from 'mongoose';
 
 // CREATE A NEW USER
 const registerUser = async (req, res) => {
@@ -13,8 +14,7 @@ const registerUser = async (req, res) => {
     profileImageUrl,
     userRole,
     closetitems,
-  } = req.body.userToSend;
-
+  } = req.body.userToRegister;
   // check if email exists in db
   const userExists = await User.findOne({ email });
 
@@ -50,6 +50,33 @@ const registerUser = async (req, res) => {
   } else {
     res.status(400);
     throw new Error('Invalid user data');
+  }
+};
+
+const updateUserProfileDetails = async (req, res) => {
+  const userId = req.params.userId;
+  console.log('updateUserProfileDetails userId ' + userId);
+  const updatedUserData = req.body;
+
+  console.log('updateUserProfileDetails: ' + JSON.stringify(updatedUserData));
+
+  try {
+    const updatedUser = await User.findOneAndUpdate(
+      { _id: new mongoose.Types.ObjectId(userId) },
+      updatedUserData,
+      {
+        new: true,
+      }
+    );
+
+    if (!updatedUser) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    res.status(200).json(updatedUser);
+  } catch (error) {
+    console.error('Error updating user profile:', error);
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -184,6 +211,7 @@ const addReferenceToNewClosetitem = async (req, res) => {
 
 export {
   registerUser,
+  updateUserProfileDetails,
   loginUser,
   getUserProfile,
   getAllUsers,

@@ -2,6 +2,7 @@ import express from 'express';
 import { protect, authorizeRoles } from '../middleware/authMiddleware.ts';
 import {
   registerUser,
+  updateUserProfileDetails,
   loginUser,
   getUserProfile,
   getAllUsers,
@@ -9,6 +10,7 @@ import {
   removeReferenceToDeletedClosetitem,
   addReferenceToNewClosetitem,
 } from '../controllers/userController.js';
+import User from '../models/userModel.js'; // Assuming you have a User model defined
 
 const userRoutes = express.Router();
 
@@ -18,18 +20,17 @@ userRoutes
   .get(protect, authorizeRoles('admin'), getAllUsers);
 
 // Get one user by id
-userRoutes.get('/:id', getOneUser);
+userRoutes.get('/update-user/:id', getOneUser);
 
 // Create a new user
 userRoutes.route('/register').post(registerUser);
 
-// update user with profile image details
-userRoutes.route('/login').post(loginUser);
-
 // update a user with additional closetitem
-userRoutes
-  .route('/:userId/closetitems/:closetitemId')
-  .put(addReferenceToNewClosetitem);
+//userRoutes.route('/update-user/:userId').put(updateUserProfileDetails);
+userRoutes.route('/update-user/:userId').put(updateUserProfileDetails);
+
+// login user
+userRoutes.route('/login').post(loginUser);
 
 // update a user with additional closetitem
 userRoutes
