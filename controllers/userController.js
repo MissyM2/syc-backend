@@ -13,7 +13,7 @@ const registerUser = async (req, res) => {
     profileImageUrl,
     userRole,
     closetitems,
-  } = req.body;
+  } = req.body.userToSend;
 
   // check if email exists in db
   const userExists = await User.findOne({ email });
@@ -22,27 +22,30 @@ const registerUser = async (req, res) => {
     res.status(404);
     throw new Error('User already exists');
   }
+  const userData = {
+    userName: userName,
+    email: email,
+    homeAddress: homeAddress,
+    password: password,
+    profileImageId: profileImageId,
+    profileImageUrl: profileImageUrl,
+    userRole: userRole,
+    closetitems: closetitems,
+  };
 
-  const user = await User.create({
-    userName,
-    email,
-    homeAddress: req.body.homeAddress || {},
-    password,
-    profileImageId,
-    profileImageUrl,
-    userRole,
-    closetitems,
-  });
+  const user = await User.create(userData);
+  const plainUser = user.toObject();
 
   if (user) {
     res.status(201).json({
-      userName: user.userName,
-      email: user.email,
-      homeAddress: user.homeAddress,
-      profileImageId: user.profileImageId,
-      profileImageUrl: user.profileImageUrl,
-      userRole: user.userRole,
-      closetitems: user.closetitems,
+      _id: plainUser._id,
+      userName: plainUser.userName,
+      email: plainUser.email,
+      homeAddress: plainUser.homeAddress,
+      profileImageId: plainUser.profileImageId,
+      profileImageUrl: plainUser.profileImageUrl,
+      userRole: plainUser.userRole,
+      closetitems: plainUser.closetitems,
     });
   } else {
     res.status(400);
