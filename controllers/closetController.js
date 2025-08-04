@@ -48,30 +48,12 @@ const getOneClosetitem = async (req, res) => {
   }
 };
 
-//#2 - Retrieve One
-//http://localhost:3000/closetitems/12345
-// const getOneClosetitem = async (req, res) => {
-//   const query = { _id: new ObjectId(req.params.id) };
-//   let db = database.getDb();
-
-//   try {
-//     let collection = await db.collection('closetitems');
-//     let result = await collection.findOne(query);
-//     if (result) {
-//       res.json(result);
-//     }
-//   } catch (err) {
-//     res.status(500).json({ message: err.message });
-//   }
-// };
-
 ///#3 - Create one
 const addClosetitem = async (req, res) => {
   const {
-    category,
+    closetType,
     itemName,
-    seasons,
-    size,
+    itemDetails: { category, seasons, size, color, occasion },
     desc,
     rating,
     imageId,
@@ -80,8 +62,9 @@ const addClosetitem = async (req, res) => {
   } = req.body;
 
   try {
-    const closetitemExists = await Closetitem.findOne({ itemName });
-    //console.log('createclosetitem: exists ' + closetitemExists);
+    const closetitemExists = await Closetitem.findOne({
+      itemName: req.body.itemName,
+    });
 
     if (closetitemExists) {
       res.status(404);
@@ -89,10 +72,15 @@ const addClosetitem = async (req, res) => {
     }
 
     const closetitemData = {
-      category: req.body.category,
+      closetType: req.body.closetType,
       itemName: req.body.itemName,
-      seasons: req.body.seasons,
-      size: req.body.size,
+      itemDetails: {
+        category: req.body.itemDetails.category,
+        seasons: req.body.itemDetails.seasons,
+        size: req.body.itemDetails.size,
+        color: req.body.itemDetails.color,
+        occasion: req.body.itemDetails.occasion,
+      },
       desc: req.body.desc,
       rating: req.body.rating,
       imageId: req.body.imageId,

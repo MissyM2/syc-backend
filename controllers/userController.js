@@ -55,10 +55,7 @@ const registerUser = async (req, res) => {
 
 const updateUserProfileDetails = async (req, res) => {
   const userId = req.params.userId;
-  console.log('updateUserProfileDetails userId ' + userId);
   const updatedUserData = req.body;
-
-  console.log('updateUserProfileDetails: ' + JSON.stringify(updatedUserData));
 
   try {
     const updatedUser = await User.findOneAndUpdate(
