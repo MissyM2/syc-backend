@@ -25,8 +25,8 @@ userRoutes.get('/update-user/:id', getOneUser);
 // Create a new user
 userRoutes.route('/register').post(registerUser);
 
-// update a user with additional closetitem
-//userRoutes.route('/update-user/:userId').put(updateUserProfileDetails);
+// update a user profile details
+
 userRoutes.route('/update-user/:userId').put(updateUserProfileDetails);
 
 // login user
