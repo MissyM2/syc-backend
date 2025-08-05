@@ -6,6 +6,7 @@ const closetitemDetailsSchema = new mongoose.Schema({
   size: { type: String, required: true },
   color: { type: String, required: true },
   occasion: { type: String, required: true },
+  rating: { type: String, required: false },
 });
 
 const closetitemSchema = new mongoose.Schema(
@@ -18,8 +19,7 @@ const closetitemSchema = new mongoose.Schema(
 
     itemName: { type: String, required: true },
     itemDetails: { type: closetitemDetailsSchema, required: true },
-    desc: { type: String, required: false },
-    rating: { type: String, required: false },
+    additionalDesc: { type: String, required: false },
     imageId: { type: String, required: false },
     imageUrl: { type: String, required: true },
     userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
