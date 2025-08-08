@@ -6,7 +6,7 @@ import {
   fetchClosetitems,
   // getClosetitem,
   addClosetitem,
-  // updateClosetitem,
+  updateClosetitem,
   deleteClosetitem,
 } from '../controllers/closetController.js';
 
@@ -28,7 +28,7 @@ closetRoutes.route('/:id').get(getOneClosetitem);
 closetRoutes.route('/addclosetitem').post(addClosetitem);
 
 // Update a closetitem
-//closetRoutes.route('/update-closetitem').put(verifyToken, updateClosetitem);
+closetRoutes.route('/update-closetitem/:closetitemId').put(updateClosetitem);
 
 // delete a closetite
 //closetRoutes.route('/delete-closetitem').delete(verifyToken, deleteClosetitem);

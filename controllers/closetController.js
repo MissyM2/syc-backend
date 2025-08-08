@@ -1,3 +1,4 @@
+import { stripTypeScriptTypes } from 'module';
 import Closetitem from '../models/closetitemModel.js';
 import User from '../models/userModel.js';
 
@@ -91,13 +92,13 @@ const addClosetitem = async (req, res) => {
     const createdClosetitem = await Closetitem.create(closetitemData);
 
     if (createdClosetitem != null) {
-      const itemId = createdClosetitem._id;
+      const closetitemId = createdClosetitem._id;
 
       // Update the user's closetitems array
       await User.findByIdAndUpdate(
         userId,
         {
-          $push: { closetitems: itemId },
+          $push: { closetitems: closetitemId },
         },
         { new: true }
       );
@@ -110,28 +111,50 @@ const addClosetitem = async (req, res) => {
 };
 
 ///#4 - Update one
-// const updateClosetitem = async (req, res) => {
-//   const query = { _id: new ObjectId(req.params.id) };
-//   const updates = {
-//     $set: {
-//       category: req.body.category,
-//       itemName: req.body.itemName,
-//       season: req.body.season,
-//       size: req.body.size,
-//       additionalDesc: req.body.additionalDesc,
-//       rating: req.body.rating,
-//     },
-//   };
+const updateClosetitem = async (req, res) => {
+  console.log('inside updateClosetitem');
+  const closetitemId = req.params.closetitemId;
+  const updatedClosetitemData = req.body;
 
-//   let db = database.getDb();
+  try {
+    const updatedClosetitem = await Closetitem.findOneAndUpdate(
+      { _id: new mongoose.Types.ObjectId(closetitemId) },
+      updatedClosetitemData,
+      {
+        new: true,
+      }
+    );
 
-//   try {
-//     let result = await db.collection('closetitems').updateOne(query, updates);
-//     res.json(result);
-//   } catch (err) {
-//     res.status(400).json({ message: err.message });
-//   }
-// };
+    if (!updatedClosetitem) {
+      return res.status(404).json({ message: 'Closet item not found' });
+    }
+
+    res.status(200).json(updatedClosetitem);
+  } catch (error) {
+    console.error('Error updating closet item:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+  // const query = { _id: new ObjectId(req.params.id) };
+  // const updates = {
+  //   $set: {
+  //     category: req.body.category,
+  //     itemName: req.body.itemName,
+  //     season: req.body.season,
+  //     size: req.body.size,
+  //     additionalDesc: req.body.additionalDesc,
+  //     rating: req.body.rating,
+  //   },
+  // };
+
+  // let db = database.getDb();
+
+  // try {
+  //   let result = await db.collection('closetitems').updateOne(query, updates);
+  //   res.json(result);
+  // } catch (err) {
+  //   res.status(400).json({ message: err.message });
+  // }
+};
 
 //#5 - Delete one
 const deleteClosetitem = async (req, res) => {
@@ -153,6 +176,6 @@ export {
   fetchClosetitems,
   //getClosetitem,
   addClosetitem,
-  //updateClosetitem,
+  updateClosetitem,
   deleteClosetitem,
 };

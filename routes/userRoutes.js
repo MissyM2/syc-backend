@@ -42,8 +42,8 @@ userRoutes
 
 // Add more routes for PUT, DELETE as needed
 
-// Update existing user, delete a itemId from the user's closetitems array
-//userRoutes.route('/:userId/closetitems/:itemId', deleteClosetitemIdFromUser);
+// Update existing user, delete a closetitemId from the user's closetitems array
+//userRoutes.route('/:userId/closetitems/:closetitemId', deleteClosetitemIdFromUser);
 
 // update a closetitem.  Remove one of the references to a closetitem id
 userRoutes
